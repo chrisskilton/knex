@@ -12,8 +12,6 @@ import Builder       from './query/builder'
 // import SchemaBuilder from './schema/builder'
 
 import Raw        from './raw'
-import {sql}      from './sql'
-import {ddl}      from './ddl'
 
 function Knex(engineOrConf) {
   if (!isEngine(engineOrConf)) {
@@ -27,14 +25,6 @@ assign(Knex, {
   get VERSION() {
     return '0.9.0'
   },
-
-  // let {gt, lt, or, where} = knex.sql
-  // or(where('id', '<', 2), where('id', '>', 3))
-  // where(or(lt('id', 2), gt('id', 3)))
-  sql,
-
-  // knex.ddl.alterTable('tableName')
-  // ddl,
 
   // new Builder([engine]).select('*').from('accounts')
   Builder,

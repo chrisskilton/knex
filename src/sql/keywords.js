@@ -19,7 +19,6 @@ class Keyword {
 export var JOIN      = new Keyword('JOIN')
 export var INNER     = new Keyword('INNER')
 export var OUTER     = new Keyword('OUTER')
-
 export var DELETE    = new Keyword('DELETE FROM')
 export var SELECT    = new Keyword('SELECT')
 export var FROM      = new Keyword('FROM')
@@ -35,7 +34,6 @@ export var AND       = new Keyword('AND')
 export var IF        = new Keyword('IF')
 export var AS        = new Keyword('AS')
 export var DISTINCT  = new Keyword('DISTINCT')
-
 export var NOT       = new Keyword('NOT')
 export var EXISTS    = new Keyword('EXISTS')
 export var IN        = new Keyword('IN')

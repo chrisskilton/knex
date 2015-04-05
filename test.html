@@ -1,0 +1,13 @@
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  <script src="/knex.build.js" type="text/javascript" charset="utf-8"></script>
+  <script>
+    var builder = new Knex.Builder()
+    var x = builder.select('*', 'name', 'id.cool').from('accounts').where('id', 1).orWhere({id: 2})
+    var y = x[Symbol.iterator]()
+  </script>
+</body>
+</html>
