@@ -1,5 +1,5 @@
 
-export var truncateInterface = {
+export var ITruncate = {
 
   // Truncates a table, ends the query chain.
   truncate(tableName) {

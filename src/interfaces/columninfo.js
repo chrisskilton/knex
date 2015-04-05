@@ -1,5 +1,5 @@
 
-export const columnInfoInterface = {
+export const IColumninfo = {
 
   // Retrieves columns for the table specified by `knex(tableName)`
   columnInfo(column) {

@@ -4,7 +4,7 @@
 //     [ WHERE condition | WHERE CURRENT OF cursor_name ]
 //     [ RETURNING * | output_expression [ [ AS ] output_name ] [, ...] ]
 
-export var deleteInterface = {
+export var IDelete = {
 
   deleteFrom(tableName) {
 
@@ -24,6 +24,6 @@ export var deleteInterface = {
 
 }
 
-deleteInterface.delete = deleteInterface.del
+IDelete.delete = IDelete.del
 
-export default deleteInterface
+export default IDelete

@@ -5,8 +5,7 @@ export {GenericBuilder} from './generic'
 import {GroupedWhereCompiler, GroupedHavingCompiler, 
   JoinCompiler, GroupedJoinCompiler, SubQueryCompiler} from '../compilers'
 
-import {selectInterface, whereInterface, 
-  havingInterface, joinInterface} from '../interfaces'
+import {ISelect, IWhere, IHaving, IJoin} from '../interfaces'
 
 import {mixin} from '../helpers'
 
@@ -15,34 +14,34 @@ export class SubQueryBuilder extends AbstractBuilder {
     return new SubQueryCompiler(this)
   }
 }
-mixin(SubQueryBuilder, selectInterface)
-mixin(SubQueryBuilder, whereInterface)
-mixin(SubQueryBuilder, havingInterface)
+mixin(SubQueryBuilder, ISelect)
+mixin(SubQueryBuilder, IWhere)
+mixin(SubQueryBuilder, IHaving)
 
 export class GroupedWhereBuilder extends AbstractBuilder {
   compile() {
     return new GroupedWhereCompiler(this)
   }
 }
-mixin(GroupedWhereBuilder, whereInterface)
+mixin(GroupedWhereBuilder, IWhere)
 
 export class GroupedHavingBuilder extends AbstractBuilder {
   compile() {
     return new GroupedHavingCompiler(this)
   }
 }
-mixin(GroupedHavingBuilder, havingInterface)
+mixin(GroupedHavingBuilder, IHaving)
 
 export class JoinBuilder extends AbstractBuilder {
   compile() {
     return new JoinCompiler(this)
   }
 }
-mixin(JoinBuilder, joinInterface)
+mixin(JoinBuilder, IJoin)
 
 export class GroupedJoinBuilder extends JoinBuilder {
   compile() {
     return new GroupedJoinCompiler(this)
   }
 }
-mixin(GroupedJoinBuilder, joinInterface)
+mixin(GroupedJoinBuilder, IJoin)

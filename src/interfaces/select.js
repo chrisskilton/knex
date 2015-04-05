@@ -1,6 +1,6 @@
 // All of the chainable methods specific to "select"
 
-export const selectInterface = {
+export const ISelect = {
 
   // Allow for the current query to be aliased
   as(ident) {

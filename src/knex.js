@@ -8,7 +8,7 @@
 
 import assign from 'lodash/object/assign'
 
-import Builder       from './query/builder'
+import Builder from './builders/generic'
 // import SchemaBuilder from './schema/builder'
 
 import Raw        from './raw'
@@ -60,8 +60,10 @@ const dialectAlias = {
 
 function makeKnex(engine) {
 
+  class KnexBuilder extends Builder {}
+
   function knex(tableName) {
-    var builder = new Builder(engine)
+    var builder = new KnexBuilder(engine)
     if (!tableName) {
       warn('invoking knex without a table is deprecated')
       return builder

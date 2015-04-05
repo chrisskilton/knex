@@ -6,7 +6,7 @@
 //     [ WHERE condition | WHERE CURRENT OF cursor_name ]
 //     [ RETURNING * | output_expression [ [ AS ] output_name ] [, ...] ]
 
-export const updateInterface = {
+export const IUpdate = {
 
   // Sets the values for an `update`, allowing for:
   // .update(key, value, [returning])

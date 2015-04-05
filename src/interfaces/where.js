@@ -4,7 +4,7 @@ import {GroupedWhereBuilder} from '../builders'
 import {or, not, raw} from '../helpers'
 import {map, into} from 'transduce'
 
-export var whereInterface = {
+export var IWhere = {
 
   // [AND | OR] WHERE [NOT]
 

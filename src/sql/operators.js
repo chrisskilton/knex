@@ -1,11 +1,8 @@
 import isArray   from 'lodash/lang/isArray'
 import * as kwd  from './keywords'
 
-import {
-  parameter as p, 
-  identifier as i
-} from './wrapping'
-
+import {parameter as p} from './parameter'
+import {identifier as i} from './identifier'
 
 class Operator {
   get grouping() {

@@ -3,7 +3,7 @@
 import _              from 'lodash'
 import {raw, wrap}    from './sql'
 import {EventEmitter} from 'events'
-import knexInterface  from './interface'
+import IRunnable      from './interfaces/runnable'
 import {mixin}        from './helpers'
 
 export default class Raw extends EventEmitter {
@@ -26,4 +26,4 @@ export default class Raw extends EventEmitter {
 
 }
 
-mixin(Raw, knexInterface)
+mixin(Raw, IRunnable)

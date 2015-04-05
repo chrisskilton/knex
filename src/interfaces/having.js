@@ -1,6 +1,6 @@
 import {or, not, raw}  from '../helpers'
 
-export var havingInterface = {
+export var IHaving = {
 
   // [AND | OR] [NOT] HAVING expression
 
@@ -35,7 +35,7 @@ export var havingInterface = {
 
 }
 
-export default havingInterface
+export default IHaving
 
 
 class Having {

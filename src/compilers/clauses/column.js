@@ -10,6 +10,7 @@ import {compose, map, filter, transducer} from 'transduce'
 var pipeline = compose(
   transducer((step, result, value) => {
     
+    debugger
     // TODO: This should be easier to construct, 
     // should be able to compose LazyTransformers easier
     if (isArray(value)) {

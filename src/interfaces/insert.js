@@ -3,7 +3,7 @@
 //     { DEFAULT VALUES | VALUES ( { expression | DEFAULT } [, ...] ) [, ...] | query }
 //     [ RETURNING * | output_expression [ [ AS ] output_name ] [, ...] ]
 
-export const insertInterface = {
+export const IInsert = {
 
   // Insert & Update
   // ------

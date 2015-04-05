@@ -1,5 +1,5 @@
 
-export var withInterface = {
+export var IWith = {
 
   withClause(clause) {
     return clause(this, withClause(clause))

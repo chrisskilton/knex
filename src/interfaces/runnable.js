@@ -1,5 +1,5 @@
 
-export const runnableInterface = {
+export const IRunnable = {
 
   transacting(trx) {
     this._transacting = trx

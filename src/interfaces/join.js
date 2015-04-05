@@ -1,5 +1,5 @@
 
-export const joinInterface = {
+export const IJoin = {
 
   // Adds an "on" clause to the current join object.
   on(first, operator, second) {
@@ -37,7 +37,7 @@ export const joinInterface = {
 
 }
 
-joinInterface.andOn = joinInterface.on
+IJoin.andOn = IJoin.on
 
 function onDispatch() {
   return new JoinExpression()

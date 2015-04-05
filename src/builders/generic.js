@@ -5,9 +5,8 @@ import {EventEmitter}     from 'events'
 import {AbstractBuilder}  from './abstract'
 import {mixin}            from '../helpers'
 
-import {selectInterface, whereInterface, 
-  havingInterface, deleteInterface, updateInterface, 
-  truncateInterface, columnInfoInterface, runnableInterface} from '../interfaces'
+import {ISelect, IWhere, IHaving, IDelete, IUpdate, 
+  ITruncate, IColumninfo, IRunnable} from '../interfaces'
 
 export class GenericBuilder extends AbstractBuilder {
 
@@ -22,11 +21,11 @@ export class GenericBuilder extends AbstractBuilder {
 
 }
 
-mixin(GenericBuilder, selectInterface)
-mixin(GenericBuilder, whereInterface)
-mixin(GenericBuilder, havingInterface)
-mixin(GenericBuilder, deleteInterface)
-mixin(GenericBuilder, updateInterface)
-mixin(GenericBuilder, truncateInterface)
-mixin(GenericBuilder, columnInfoInterface)
-mixin(GenericBuilder, runnableInterface)
+mixin(GenericBuilder, ISelect)
+mixin(GenericBuilder, IWhere)
+mixin(GenericBuilder, IHaving)
+mixin(GenericBuilder, IDelete)
+mixin(GenericBuilder, IUpdate)
+mixin(GenericBuilder, ITruncate)
+mixin(GenericBuilder, IColumninfo)
+mixin(GenericBuilder, IRunnable)
