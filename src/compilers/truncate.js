@@ -1,20 +1,19 @@
 // TRUNCATE [ TABLE ] [ ONLY ] name [ * ] [, ... ]
 //     [ RESTART IDENTITY | CONTINUE IDENTITY ] [ CASCADE | RESTRICT ]
 
-import {TRUNCATE}  from '../../sql/constants'
+import {TRUNCATE}  from '../sql/keywords'
+import {iterator, iterSymbol}  from 'transduce'
 
 class TruncateCompiler {
 
   constructor(elements) {
     this.elements = elements
-    this.type     = 'truncateStatement'
+    this['@@knex/hook'] = 'statement:truncate'
   }
 
-  compile() {
+  [iterSymbol]() {
     let {table}  = this.elements.single
-    return [
-      TRUNCATE, table
-    ]
+    return iterator([TRUNCATE, table])
   }
 
 }

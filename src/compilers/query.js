@@ -1,18 +1,22 @@
-import {SELECT} from '../sql/keywords'
+import {SELECT}   from '../sql/keywords'
+import {iterator, iterSymbol} from 'transduce'
 
-import {ColumnCompiler, FromCompiler, WhereCompiler, 
+import {
+  ColumnCompiler, FromCompiler, WhereCompiler, 
   JoinCompiler, GroupingCompiler, HavingCompiler, 
-  OrderingCompiler, LimitCompiler, OffsetCompiler} from './clauses'
+  OrderingCompiler, LimitCompiler, OffsetCompiler
+} from './clauses'
 
 export class QueryCompiler {
 
   constructor(container) {
-    this.container = container
+    this.container      = container
+    this['@@knex/hook'] = 'expression:query'
   }
 
-  compile() {
+  [iterSymbol]() {
     let t = this.container
-    return [
+    return iterator([
       SELECT,
       new ColumnCompiler(t.get('columns')),
       new FromCompiler(t.get('from') || this.get('table')),
@@ -23,7 +27,7 @@ export class QueryCompiler {
       new OrderingCompiler(t.get('orderBy')),
       new LimitCompiler(t.last('limit')),
       new OffsetCompiler(t.last('offset'))
-    ]
+    ])
   }
 
 }

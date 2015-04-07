@@ -1,16 +1,16 @@
-import {whereIter}   from '../iterators'
-import {INSERT_INTO} from '../../sql/constants'
+import {INSERT_INTO} from '../sql/keywords'
+import {iterator, iterSymbol}    from 'transduce'
 
 export class InsertCompiler {
 
   constructor(elements) {
-    this.elements = elements
-    this.type     = 'insertStatement'
+    this.elements       = elements
+    this['@@knex/hook'] = 'expression:insert'
   }
 
-  compile() {
+  [iterSymbol]() {
     let {table} = this.elements.single
-    return [INSERT_INTO, new TableCompiler(table)]
+    return iterator([INSERT_INTO, new TableCompiler(table)])
   }
 
 }

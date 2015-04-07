@@ -5,7 +5,7 @@ class Identifier {
     this.type  = 'identifier'
   }
   compile() {
-    return this.value
+    return "'" + this.value + "'"
   }
 }
 

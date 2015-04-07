@@ -1,6 +1,4 @@
-import sequence from './sequence'
-import {transducer, drop} from 'transduce'
-import {WHERE}  from '../sql/keywords'
+import {transducer, drop, seq} from 'transduce'
 
 class DropFirst {
 
@@ -15,12 +13,12 @@ class DropFirst {
 
 }
 
-export function dropFirstClause(Ctor, values) {
+export function dropFirstClause(Ctor, prefix, values) {
   var seen;
-  return sequence(transducer((step, value, input) => {
+  return seq(transducer((step, value, input) => {
     if (input && !seen) {
       seen = true
-      return step(value, [WHERE, new DropFirst(new Ctor(input))])
+      return step(value, [prefix, new DropFirst(new Ctor(input))])
     } else if (input) {
       return step(value, new Ctor(input))
     }

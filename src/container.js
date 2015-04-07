@@ -1,5 +1,5 @@
-import last from 'lodash/array/last'
-import {into} from 'transduce'
+import lastVal from 'lodash/array/last'
+import {into}  from 'transduce'
 
 export default class TokenContainer {
 
@@ -28,7 +28,7 @@ export default class TokenContainer {
 
   last(key) {
     if (!this.has(key)) return
-    return last(this.tokens.get(key))
+    return lastVal(this.tokens.get(key))
   }
 
   [Symbol.iterator]() {

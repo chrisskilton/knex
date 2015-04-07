@@ -1,7 +1,7 @@
 
 export class Returning {
 
-  compile() {
+  ['@@knex/compile']() {
     
   }
 

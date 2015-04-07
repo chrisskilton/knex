@@ -1,7 +1,7 @@
 
 export class UpdateClause {
 
-  compile() {
+  ['@@knex/compile']() {
     
   }
 

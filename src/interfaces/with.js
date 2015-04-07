@@ -1,5 +1,5 @@
 
-export var IWith = {
+export const IWith = {
 
   withClause(clause) {
     return clause(this, withClause(clause))

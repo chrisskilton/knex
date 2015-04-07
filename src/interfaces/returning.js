@@ -1,5 +1,5 @@
 
-var IReturning = {
+export const IReturning = {
 
   // Sets the returning value for the query.
   returning(val) {

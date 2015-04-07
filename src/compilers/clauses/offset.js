@@ -7,7 +7,7 @@ export class OffsetCompiler {
     this.type  = 'clause:offset'
   }
 
-  compile() {
+  ['@@knex/compile']() {
     if (!this.value) return
     return [OFFSET, this.value]
   }

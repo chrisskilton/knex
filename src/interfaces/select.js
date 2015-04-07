@@ -169,8 +169,8 @@ export const ISelect = {
 
 // Aliases:
 
-selectInterface.column  = selectInterface.select
-selectInterface.columns = selectInterface.select
+ISelect.column  = ISelect.select
+ISelect.columns = ISelect.select
 
 function aggregate(builder, fnName, column) {
   var [ident, aliased] = extractAlias(column)
@@ -229,5 +229,3 @@ export function crossJoin(args) {
 export function joinRaw(sql, bindings) {
   return new RawExpression('joins', sql, bindings)
 }
-
-export default selectInterface

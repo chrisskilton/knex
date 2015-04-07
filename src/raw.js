@@ -1,14 +1,16 @@
 // Raw
 // -------
-import _              from 'lodash'
-import {raw, wrap}    from './sql'
 import {EventEmitter} from 'events'
-import IRunnable      from './interfaces/runnable'
+import _              from 'lodash'
+import {raw}          from './sql'
+import {IRunnable}    from './interfaces/runnable'
 import {mixin}        from './helpers'
+import {wrap}         from './sql/wrap'
 
 export default class Raw extends EventEmitter {
   
   constructor(engine) {
+    super()
     this.engine = engine
     this.sql    = null
   }

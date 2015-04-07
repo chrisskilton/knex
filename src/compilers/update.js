@@ -1,6 +1,6 @@
-import {UPDATE}        from '../../sql/constants'
-import {whereIter}     from '../iterators'
+import {UPDATE}        from '../sql/keywords'
 import {WhereCompiler} from './clauses/where'
+import {iterator, iterSymbol}      from 'transduce'
 
 class UpdateCompiler {
 
@@ -9,8 +9,8 @@ class UpdateCompiler {
     this.type     = 'updateStatement'
   }
 
-  compile() {
-    return [UPDATE, table, new WhereCompiler(wheres)]
+  [iterSymbol]() {
+    return iterator([UPDATE, table, new WhereCompiler(wheres)])
   }
 
 }

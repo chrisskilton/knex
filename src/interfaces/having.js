@@ -4,25 +4,20 @@ export var IHaving = {
 
   // [AND | OR] [NOT] HAVING expression
 
-  having() {
-    return this.__clause(having(...arguments))
+  having(...args) {
+    return this.__clause(having(args))
   },
 
-  notHaving() {
-    return this.__clause(not(having(...arguments)))
+  notHaving(...args) {
+    return this.__clause(not(having(args)))
   },
 
-  andHaving() {
-    console.log('andHaving is deprecated, you can just use an additional having statement.')
-    return this.andHaving.apply(this, arguments)
-  },  
-
-  orHaving() {
-    return this.__clause(or(having(...arguments)))
+  orHaving(...args) {
+    return this.__clause(or(having(args)))
   },
 
-  orNotHaving() {
-    return this.__clause(or(not(having(...arguments))))
+  orNotHaving(...args) {
+    return this.__clause(or(not(having(args))))
   },
 
   havingRaw(sql, bindings) {
@@ -31,21 +26,23 @@ export var IHaving = {
   
   orHavingRaw(sql, bindings) {
     return this.__clause(or(having(raw(sql, bindings))))
-  }
+  },
+
+  andHaving() {
+    console.log('andHaving is deprecated, you can just use an additional having statement.')
+    return this.andHaving.apply(this, arguments)
+  }  
 
 }
-
-export default IHaving
-
 
 class Having {
 
   constructor(value) {
-    this.type    = 'having'
-    this.value   = value
-    this.negated = false
-    this.or      = false
-    this.wrapped = false
+    this.value          = value
+    this.negated        = false
+    this.or             = false
+    this.wrapped        = false
+    this['@@knex/hook'] = 'having'
   }
 
 }

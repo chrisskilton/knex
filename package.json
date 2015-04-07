@@ -17,6 +17,7 @@
     "sqlite3": false
   },
   "dependencies": {
+    "babel-loader": "^5.0.0",
     "bluebird": "^2.0.0",
     "chalk": "~0.5.1",
     "commander": "^2.2.0",
@@ -29,7 +30,7 @@
     "pool2": "^1.0.0",
     "readable-stream": "^1.1.12",
     "tildify": "~1.0.0",
-    "transduce": "^0.7.0",
+    "transduce": "tgriesser/transduce.git#6e4b53661006edca7dfa24d0c7c1027ba120a3fe",
     "v8flags": "^2.0.2"
   },
   "devDependencies": {

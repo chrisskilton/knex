@@ -2,8 +2,6 @@
 // -------
 import {AbstractBuilder}   from './abstract'
 import {raw}               from '../sql'
-import {mixin}             from '../helpers'
-import {runnableInterface} from '../interfaces'
 
 export class RawBuilder extends AbstractBuilder {
   
@@ -23,5 +21,3 @@ export class RawBuilder extends AbstractBuilder {
   }
 
 }
-
-mixin(RawBuilder, runnableInterface)

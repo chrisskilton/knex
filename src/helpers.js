@@ -2,8 +2,24 @@ import _       from 'lodash'
 import isArray from 'lodash/lang/isArray'
 import {alias} from './sql'
 
+export function or(obj) {
+  if (isArray(obj)) return obj.map((val) => or(val))
+  obj.__or = true
+  return obj
+}
+
+export function not(obj) {
+  if (isArray(obj)) return obj.map((val) => not(val))
+  obj.__negated = true
+  return obj
+}
+
 export function mixin(Class, methods) {
-  Object.keys(methods).forEach((name) => Class.prototype[name] = methods[name])
+  var keyCopier = key => { Class.prototype[key] = methods[key]; };
+  Object.keys(methods).forEach(keyCopier);
+  Object.getOwnPropertySymbols &&
+    Object.getOwnPropertySymbols(methods).forEach(keyCopier);
+  return Class
 }
 
 // Pick off the attributes from only the current layer of the object.

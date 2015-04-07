@@ -6,11 +6,11 @@ class Keyword {
     this.type  = 'keyword'
   }
 
-  compile() {
+  toString() {
     return this.value
   }
 
-  toString() {
+  ['@@knex/compile']() {
     return this.value
   }
 

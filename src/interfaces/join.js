@@ -60,10 +60,10 @@ import {JOIN, INNER, LEFT, LEFT_OUTER, RIGHT,
 class JoinClause {
 
   constructor(joinType, a) {
-    this.joinType  = joinType
-    this.column    = column
-    this.value     = value
-    this.type      = 'joinClause'
+    this.joinType       = joinType
+    this.column         = column
+    this.value          = value
+    this['@@knex/hook'] = 'join'
   }
 
   compile() {
@@ -75,21 +75,9 @@ class JoinClause {
 
 class OnClause {
 
-
-
 }
 
 class UsingClause {
-
-
-
-}
-
-function using() {
-  
-}
-
-function on() {
 
 }
 
@@ -110,61 +98,3 @@ function on() {
 //   return acc;
 // }, [], this);
 // return sql.length > 0 ? sql.join(' ') : '';
-
-function joinArity1(join) {
-  if (isClause(join)) {
-    
-  }
-  if (isString(join)) {
-    
-  }
-  if (isFucntion(join)) {
-    
-  }
-}
-
-export function join(joinType, args) {
-  switch(args.length) {
-    case 1: return joinArity1(joinType, args[0])
-    case 2: return joinArity2(joinType, args[0], args[1])
-    case 3: return joinArity3(joinType, args[0], args[1], args[2])
-  }
-  return this
-}
-
-export function innerJoin(args) {
-  return join(INNER, args)
-}
-
-export function leftJoin(args) {
-  return join(LEFT, args)
-}
-
-export function leftOuterJoin(args) {
-  return join(LEFT_OUTER, args)
-}
-
-export function rightJoin(args) {
-  return join(RIGHT, args)
-}
-
-export function rightOuterJoin(args) {
-  return join(RIGHT_OUTER, args)
-}
-
-export function outerJoin(args) {
-  return join(OUTER, args)
-}
-
-export function fullOuterJoin(args) {
-  return join(FULL_OUTER, args)
-}
-
-export function crossJoin(args) {
-  return join(CROSS, args)
-}
-
-export function joinRaw(sql, bindings) {
-  return new RawExpression('joins', sql, bindings)
-}
-

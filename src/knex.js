@@ -8,7 +8,7 @@
 
 import assign from 'lodash/object/assign'
 
-import Builder from './builders/generic'
+import {QueryBuilder} from './builders/query'
 // import SchemaBuilder from './schema/builder'
 
 import Raw        from './raw'
@@ -27,7 +27,7 @@ assign(Knex, {
   },
 
   // new Builder([engine]).select('*').from('accounts')
-  Builder,
+  Builder: QueryBuilder,
 
   // new SchemaBuidler([engine]).createTable(tableName, () => {})
   // SchemaBuidler,
@@ -60,7 +60,7 @@ const dialectAlias = {
 
 function makeKnex(engine) {
 
-  class KnexBuilder extends Builder {}
+  class KnexBuilder extends GenericBuilder {}
 
   function knex(tableName) {
     var builder = new KnexBuilder(engine)

@@ -1,7 +1,7 @@
 
 export class JoinCompiler {
 
-  compile() {
+  ['@@knex/compile']() {
 
   }
 

@@ -1,13 +1,13 @@
 import forEach from 'lodash/collection/forEach'
 import isArray from 'lodash/lang/isArray'
-import into    from 'transduce/core/into'
+import {into}  from 'transduce'
 import TokenContainer from '../container'
 import {EventEmitter} from 'events'
-import {compileFrom} from '../compilers'
 
 export class AbstractBuilder extends EventEmitter {
 
   constructor(engine) {
+    super()
     this.engine    = engine
     this.container = new TokenContainer()
 
@@ -28,10 +28,6 @@ export class AbstractBuilder extends EventEmitter {
       this.__cache.push(item)
     }
     return this.__cache
-  }
-
-  [Symbol.iterator]() {
-    return compileFrom(this)
   }
 
   // A few getters to make the chain look nice:

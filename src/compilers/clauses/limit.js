@@ -7,7 +7,7 @@ export class LimitCompiler {
     this.type  = 'clause:limit'
   }
 
-  compile() {
+  ['@@knex/compile']() {
     if (!this.value) return
     return [LIMIT, this.value]
   }

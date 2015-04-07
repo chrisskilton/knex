@@ -1,4 +1,4 @@
-import AbstractBuilder from './abstract'
+import {AbstractBuilder} from './abstract'
 
 class SchemaBuilder extends AbstractBuilder {
   

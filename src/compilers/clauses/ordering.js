@@ -7,7 +7,7 @@ export class OrderingCompiler {
     this.type  = 'clause:order'
   }
 
-  compile() {
+  ['@@knex/compile']() {
     if (!this.value) return
     return [ORDER_BY, value]
   }

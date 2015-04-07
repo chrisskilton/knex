@@ -25,5 +25,3 @@ export var IDelete = {
 }
 
 IDelete.delete = IDelete.del
-
-export default IDelete

@@ -1,27 +1,26 @@
 import {isPlainObject, isArray, isBoolean, isString} from 'lodash/lang'
-import {SubQueryBuilder} from '../builders'
-import {GroupedWhereBuilder} from '../builders'
 import {or, not, raw} from '../helpers'
-import {map, into} from 'transduce'
+import {map, into}    from 'transduce'
+import * as Builders  from '../builders/query'
 
-export var IWhere = {
+export const IWhere = {
 
   // [AND | OR] WHERE [NOT]
 
-  where() {
-    return this.__where(whereDispatch(...arguments))
+  where(...args) {
+    return this.__where(whereDispatch(args))
   },
 
-  orWhere() {
-    return this.__where(or(whereDispatch(...arguments)))
+  orWhere(...args) {
+    return this.__where(or(whereDispatch(args)))
   },
 
-  whereNot() {
-    return this.__where(not(whereDispatch(...arguments)))
+  whereNot(...args) {
+    return this.__where(not(whereDispatch(args)))
   },
 
-  orWhereNot() {
-    return this.__where(or(not(whereDispatch(...arguments))))
+  orWhereNot(...args) {
+    return this.__where(or(not(whereDispatch(args))))
   },
 
   whereRaw(sql, bindings) {
@@ -139,7 +138,7 @@ class WhereClause {
 
 }
 
-function whereDispatch(...args) {
+function whereDispatch(args) {
   switch (args.length) {
     case 0: return;
     case 1: return whereArity1(args[0])
@@ -151,10 +150,10 @@ function whereDispatch(...args) {
 // e.g. where(raw()), where('col = 2'), where({col: 2, id: 2}), where(fn)
 function whereArity1(value) {
   if (typeof value === 'function') {
-    var w   = new GroupedWhereBuilder()
+    var w   = new Builders.GroupedWhereBuilder()
     var out = value.call(w, w)
     var val = out && typeof out.compile === 'function' ? out : w
-    return val
+    return new WhereClause(val)
   }
   if (isPlainObject(value)) {
     return into([], map(([key, val]) => whereArity3(key, '=', val)), value)
@@ -177,7 +176,7 @@ function whereArity2(column, value) {
   if (value === null) {
     return new WhereClause(isNull(value), column)
   }
-  return whereDispatch(column, '=', value)
+  return new WhereClause(column, '=', value)
 }
 
 function whereArity3(column, operator, value) {
@@ -192,14 +191,14 @@ function whereArity3(column, operator, value) {
   return new WhereClause(column, operator, value)
 }
 
-export function whereBetween(col, values) {
+function whereBetween(col, values) {
   if (!isArray(values) || values.length !== 2) {
     throw new TypeError('You must specify a two value array to the whereBetween clause')
   }
   return new WhereClause(col, BETWEEN, and(values[0], values[1]))
 }
 
-export function whereExists(fn) {
+function whereExists(fn) {
   if (typeof fn === 'function') {
 
   }
@@ -209,7 +208,7 @@ export function whereExists(fn) {
   return new WhereClause(exists(value), column)
 }
 
-export function whereIn(col, value) {
+function whereIn(col, value) {
   if (typeof value === 'function') {
     value = subQuery(value)
   }
@@ -219,7 +218,7 @@ export function whereIn(col, value) {
   return where(col, IN, value)
 }
 
-export function whereNull(col, value) {
+function whereNull(col, value) {
   return where(col, IS, NULL)
 }
 

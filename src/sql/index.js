@@ -1,10 +1,6 @@
 
-export * from './operators'
-export * from './wrapping'
-export * from './where'
-
 import isArray from 'lodash/lang/isArray'
-import {identifier as i} from './wrapping'
+import {identifier as i} from './identifier'
 import {AS, DISTINCT} from './keywords'
 
 class Table {
