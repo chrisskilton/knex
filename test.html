@@ -6,8 +6,7 @@
   <script src="/knex.build.js" type="text/javascript" charset="utf-8"></script>
   <script>
     var builder = new Knex.Builder()
-    var x = builder.select('*', 'name', 'id.cool')
-      .from('accounts')
+    var x = builder.select('name', 'age').from('accounts')
       .where('id', 1)
       .orWhere({id: 2})
       .where(function() {

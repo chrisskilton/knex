@@ -1,7 +1,6 @@
 
 
 /*jslint node:true, nomen: true*/
-var inherits = require('util').inherits;
 var Readable = require('stream').Readable;
 
 var _ = require('lodash');
@@ -18,7 +17,6 @@ function OracleQueryStream(connection, sql, bindings, options) {
     throw err;
   }
 }
-
 inherits(OracleQueryStream, Readable);
 
 OracleQueryStream.prototype._read = function() {

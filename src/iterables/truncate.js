@@ -4,7 +4,7 @@
 import {TRUNCATE}  from '../sql/keywords'
 import {iterator, iterSymbol}  from 'transduce'
 
-class TruncateCompiler {
+class TruncateIterable {
 
   constructor(elements) {
     this.elements = elements

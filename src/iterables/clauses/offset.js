@@ -1,6 +1,6 @@
 import {OFFSET} from '../../sql/keywords'
 
-export class OffsetCompiler {
+export class OffsetIterable {
 
   constructor(value) {
     this.value = value

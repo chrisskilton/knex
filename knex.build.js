@@ -276,9 +276,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
 	exports.__esModule = true;
-	var compile = "@@knex/compile";
+
+	var forEach = _interopRequire(__webpack_require__(8));
+
+	var _transduce = __webpack_require__(23);
+
+	var iterSymbol = _transduce.iterSymbol;
+	var iterator = _transduce.iterator;
 
 	var AbstractBuilder = __webpack_require__(10).AbstractBuilder;
+
+	var mixin = __webpack_require__(6).mixin;
 
 	var ISelect = __webpack_require__(11).ISelect;
 
@@ -300,11 +308,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var IIterable = __webpack_require__(19).IIterable;
 
-	var mixin = __webpack_require__(6).mixin;
+	var SubQueryIterable = __webpack_require__(111).SubQueryIterable;
 
-	var SubQueryCompiler = __webpack_require__(20).SubQueryCompiler;
-
-	var forEach = _interopRequire(__webpack_require__(8));
+	var GroupedWhereIterable = __webpack_require__(112).GroupedWhereIterable;
 
 	var QueryBuilder = exports.QueryBuilder = (function (_AbstractBuilder) {
 	  function QueryBuilder() {
@@ -352,8 +358,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  _inherits(SubQueryBuilder, _AbstractBuilder2);
 
-	  SubQueryBuilder.prototype[compile] = function () {
-	    return new SubQueryCompiler(this);
+	  SubQueryBuilder.prototype[iterSymbol] = function () {
+	    return iterator(new SubQueryIterable(this));
 	  };
 
 	  return SubQueryBuilder;
@@ -362,7 +368,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	mixin(SubQueryBuilder, ISelect);
 	mixin(SubQueryBuilder, IWhere);
 	mixin(SubQueryBuilder, IHaving);
-	mixin(SubQueryBuilder, IIterable);
 
 	var GroupedWhereBuilder = exports.GroupedWhereBuilder = (function (_AbstractBuilder3) {
 	  function GroupedWhereBuilder() {
@@ -375,15 +380,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  _inherits(GroupedWhereBuilder, _AbstractBuilder3);
 
-	  GroupedWhereBuilder.prototype[compile] = function () {
-	    return new GroupedWhereCompiler(this.container.get("wheres"));
+	  GroupedWhereBuilder.prototype[iterSymbol] = function () {
+	    return iterator(new GroupedWhereIterable(this.container.get("wheres")));
 	  };
 
 	  return GroupedWhereBuilder;
 	})(AbstractBuilder);
 
 	mixin(GroupedWhereBuilder, IWhere);
-	mixin(GroupedWhereBuilder, IIterable);
 
 	var GroupedHavingBuilder = exports.GroupedHavingBuilder = (function (_AbstractBuilder4) {
 	  function GroupedHavingBuilder() {
@@ -396,15 +400,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  _inherits(GroupedHavingBuilder, _AbstractBuilder4);
 
-	  GroupedHavingBuilder.prototype[compile] = function () {
-	    return new GroupedHavingCompiler(this);
+	  GroupedHavingBuilder.prototype[iterSymbol] = function () {
+	    return iterator(new GroupedHavingIterable(this));
 	  };
 
 	  return GroupedHavingBuilder;
 	})(AbstractBuilder);
 
 	mixin(GroupedHavingBuilder, IHaving);
-	mixin(GroupedHavingBuilder, IIterable);
 
 	var JoinBuilder = exports.JoinBuilder = (function (_AbstractBuilder5) {
 	  function JoinBuilder() {
@@ -417,15 +420,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  _inherits(JoinBuilder, _AbstractBuilder5);
 
-	  JoinBuilder.prototype[compile] = function () {
-	    return new JoinCompiler(this);
+	  JoinBuilder.prototype[iterSymbol] = function () {
+	    return iterator(new JoinIterable(this));
 	  };
 
 	  return JoinBuilder;
 	})(AbstractBuilder);
 
 	mixin(JoinBuilder, IJoin);
-	mixin(JoinBuilder, IIterable);
 
 	var GroupedJoinBuilder = exports.GroupedJoinBuilder = (function (_JoinBuilder) {
 	  function GroupedJoinBuilder() {
@@ -438,8 +440,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  _inherits(GroupedJoinBuilder, _JoinBuilder);
 
-	  GroupedJoinBuilder.prototype[compile] = function () {
-	    return new GroupedJoinCompiler(this);
+	  GroupedJoinBuilder.prototype[iterSymbol] = function () {
+	    return iterator(new GroupedJoinIterable(this));
 	  };
 
 	  return GroupedJoinBuilder;
@@ -460,7 +462,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Raw
 	// -------
 
-	var EventEmitter = __webpack_require__(21).EventEmitter;
+	var EventEmitter = __webpack_require__(22).EventEmitter;
 
 	var _ = _interopRequire(__webpack_require__(4));
 
@@ -516,8 +518,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseAssign = __webpack_require__(22),
-	    createAssigner = __webpack_require__(23);
+	var baseAssign = __webpack_require__(24),
+	    createAssigner = __webpack_require__(25);
 
 	/**
 	 * Assigns own enumerable properties of source object(s) to the destination
@@ -12157,7 +12159,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(41)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(43)(module), (function() { return this; }())))
 
 /***/ },
 /* 5 */
@@ -12349,7 +12351,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _ = _interopRequire(__webpack_require__(4));
 
-	var isArray = _interopRequire(__webpack_require__(27));
+	var isArray = _interopRequire(__webpack_require__(26));
 
 	var alias = __webpack_require__(9).alias;
 
@@ -12478,7 +12480,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.wrap = wrap;
 	exports.__esModule = true;
 
-	var _keywords = __webpack_require__(28);
+	var _keywords = __webpack_require__(27);
 
 	var LEFT_PAREN = _keywords.LEFT_PAREN;
 	var RIGHT_PAREN = _keywords.RIGHT_PAREN;
@@ -12511,10 +12513,10 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayEach = __webpack_require__(24),
-	    baseEach = __webpack_require__(25),
-	    bindCallback = __webpack_require__(26),
-	    isArray = __webpack_require__(27);
+	var arrayEach = __webpack_require__(28),
+	    baseEach = __webpack_require__(29),
+	    bindCallback = __webpack_require__(30),
+	    isArray = __webpack_require__(26);
 
 	/**
 	 * Iterates over elements of `collection` invoking `iteratee` for each element.
@@ -12586,11 +12588,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.raw = raw;
 	exports.__esModule = true;
 
-	var isArray = _interopRequire(__webpack_require__(27));
+	var isArray = _interopRequire(__webpack_require__(26));
 
-	var i = __webpack_require__(29).identifier;
+	var i = __webpack_require__(31).identifier;
 
-	var _keywords = __webpack_require__(28);
+	var _keywords = __webpack_require__(27);
 
 	var AS = _keywords.AS;
 	var DISTINCT = _keywords.DISTINCT;
@@ -12820,13 +12822,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var forEach = _interopRequire(__webpack_require__(8));
 
-	var isArray = _interopRequire(__webpack_require__(27));
+	var isArray = _interopRequire(__webpack_require__(26));
 
-	var into = __webpack_require__(40).into;
+	var into = __webpack_require__(23).into;
 
-	var TokenContainer = _interopRequire(__webpack_require__(30));
+	var TokenContainer = _interopRequire(__webpack_require__(32));
 
-	var EventEmitter = __webpack_require__(21).EventEmitter;
+	var EventEmitter = __webpack_require__(22).EventEmitter;
 
 	var AbstractBuilder = exports.AbstractBuilder = (function (_EventEmitter) {
 	  function AbstractBuilder(engine) {
@@ -13411,7 +13413,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.__esModule = true;
 
-	var _lodashLang = __webpack_require__(31);
+	var _lodashLang = __webpack_require__(33);
 
 	var isPlainObject = _lodashLang.isPlainObject;
 	var isArray = _lodashLang.isArray;
@@ -13424,10 +13426,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	var not = _helpers.not;
 	var raw = _helpers.raw;
 
-	var _transduce = __webpack_require__(40);
+	var _transduce = __webpack_require__(23);
 
 	var map = _transduce.map;
 	var into = _transduce.into;
+	var isIterable = _transduce.isIterable;
 
 	var Builders = _interopRequireWildcard(__webpack_require__(1));
 
@@ -13607,7 +13610,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.IWhere = IWhere;
 
-	var _sqlKeywords = __webpack_require__(28);
+	var _sqlKeywords = __webpack_require__(27);
 
 	var OR = _sqlKeywords.OR;
 	var AND = _sqlKeywords.AND;
@@ -13615,9 +13618,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var IN = _sqlKeywords.IN;
 	var BETWEEN = _sqlKeywords.BETWEEN;
 
-	var i = __webpack_require__(29).identifier;
+	var i = __webpack_require__(31).identifier;
 
-	var p = __webpack_require__(32).parameter;
+	var p = __webpack_require__(34).parameter;
 
 	var WhereClause = function WhereClause(column, operator, value) {
 	  _classCallCheck(this, WhereClause);
@@ -13648,7 +13651,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (typeof value === "function") {
 	    var w = new Builders.GroupedWhereBuilder();
 	    var out = value.call(w, w);
-	    var val = out && typeof out.compile === "function" ? out : w;
+	    var val = out && isIterable(out) ? out : w;
 	    return new WhereClause(val);
 	  }
 	  if (isPlainObject(value)) {
@@ -13765,30 +13768,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  // [AND | OR] [NOT] HAVING expression
 
-	  having: (function (_having) {
-	    var _havingWrapper = function having(_x) {
-	      return _having.apply(this, arguments);
-	    };
-
-	    _havingWrapper.toString = function () {
-	      return _having.toString();
-	    };
-
-	    return _havingWrapper;
-	  })(function () {
+	  having: function having() {
 	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 	      args[_key] = arguments[_key];
 	    }
 
-	    return this.__clause(having(args));
-	  }),
+	    return this.__clause(havingDispatch(args));
+	  },
 
 	  notHaving: function notHaving() {
 	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 	      args[_key] = arguments[_key];
 	    }
 
-	    return this.__clause(not(having(args)));
+	    return this.__clause(not(havingDispatch(args)));
 	  },
 
 	  orHaving: function orHaving() {
@@ -13796,7 +13789,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      args[_key] = arguments[_key];
 	    }
 
-	    return this.__clause(or(having(args)));
+	    return this.__clause(or(havingDispatch(args)));
 	  },
 
 	  orNotHaving: function orNotHaving() {
@@ -13804,15 +13797,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	      args[_key] = arguments[_key];
 	    }
 
-	    return this.__clause(or(not(having(args))));
+	    return this.__clause(or(not(havingDispatch(args))));
 	  },
 
 	  havingRaw: function havingRaw(sql, bindings) {
-	    return this.__clause(having(raw(sql, bindings)));
+	    return this.__clause(havingDispatch(raw(sql, bindings)));
 	  },
 
 	  orHavingRaw: function orHavingRaw(sql, bindings) {
-	    return this.__clause(or(having(raw(sql, bindings))));
+	    return this.__clause(or(havingDispatch(raw(sql, bindings))));
 	  },
 
 	  andHaving: function andHaving() {
@@ -14098,7 +14091,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _classCallCheck(this, JoinExpression);
 	};
 
-	var _sqlKeywords = __webpack_require__(28);
+	var _sqlKeywords = __webpack_require__(27);
 
 	var JOIN = _sqlKeywords.JOIN;
 	var INNER = _sqlKeywords.INNER;
@@ -14165,20 +14158,47 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 
+	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+	var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; for (var _iterator = arr[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) { _arr.push(_step.value); if (i && _arr.length === i) break; } return _arr; } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } };
+
+	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
 	exports.__esModule = true;
 
-	var _transduce = __webpack_require__(40);
+	var QueryIterable = __webpack_require__(111).QueryIterable;
+
+	var InsertIterable = __webpack_require__(124).InsertIterable;
+
+	var DeleteIterable = __webpack_require__(125).DeleteIterable;
+
+	var UpdateIterable = __webpack_require__(126).UpdateIterable;
+
+	var camelCase = _interopRequire(__webpack_require__(127));
+
+	var _transduce = __webpack_require__(23);
 
 	var isIterable = _transduce.isIterable;
+	var isIterator = _transduce.isIterator;
+	var filter = _transduce.filter;
 	var iterSymbol = _transduce.iterSymbol;
-	var seq = _transduce.seq;
+	var lazySeq = _transduce.lazySeq;
+	var interpose = _transduce.interpose;
 	var into = _transduce.into;
 	var map = _transduce.map;
+	var Transducer = _transduce.Transducer;
 	var transducer = _transduce.transducer;
 	var iterator = _transduce.iterator;
 	var compose = _transduce.compose;
+	var protocols = _transduce.protocols;
+	var FlattenIterator = _transduce.FlattenIterator;
+	var _protocols$transducer = protocols.transducer;
+	var tStep = _protocols$transducer.step;
+	var tResult = _protocols$transducer.result;
 
-	var _lodashLang = __webpack_require__(31);
+	var _lodashLang = __webpack_require__(33);
 
 	var isNull = _lodashLang.isNull;
 	var isArray = _lodashLang.isArray;
@@ -14195,32 +14215,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	})();
 
 	exports.IIterable = IIterable;
-
-	var QueryCompiler = __webpack_require__(20).QueryCompiler;
-
-	var InsertCompiler = __webpack_require__(33).InsertCompiler;
-
-	var DeleteCompiler = __webpack_require__(34).DeleteCompiler;
-
-	var UpdateCompiler = __webpack_require__(35).UpdateCompiler;
-
 	function compileFrom(builder) {
 	  var container = builder.container;
 
 	  var hooks = container.get("hooks");
-	  return seq(compose(compiler(hooks), addSpace()), iterator(compileTarget(container)));
+	  return sqlSeq(hooks, iterator(compileTarget(container)));
 	}
 
 	function compileTarget(container) {
 	  switch (container.last("statementType")) {
 	    case "select":
-	      return new QueryCompiler(container);
+	      return new QueryIterable(container);
 	    case "update":
-	      return new UpdateCompiler(container);
+	      return new UpdateIterable(container);
 	    case "delete":
-	      return new DeleteCompiler(container);
+	      return new DeleteIterable(container);
 	    case "insert":
-	      return new InsertCompiler(container);
+	      return new InsertIterable(container);
 	  }
 	}
 
@@ -14228,90 +14239,121 @@ return /******/ (function(modules) { // webpackBootstrap
 	var DONE = { done: true, value: undefined };
 	var SPACE = { done: false, value: " " };
 
-	function compiler(hooks) {
-	  var pipeline = compose(transducer(function (step, result, value) {
-	    // Check hooks...
-	    if (isIterable(value)) {
-	      debugger;
-	      return into(result, pipeline, iterator(value));
-	    }
-	    return step(result, value);
-	  }));
-	  return pipeline;
+	// The root seq takes a "transducer",
+	// and returns a lazy iterator.
+	function sqlSeq(hooks, iterator) {
+	  return lazySeq(pipeline, new RootIterator(hooks, iterator));
 	}
 
-	function addSpace() {
+	var RootIterator = (function (_FlattenIterator) {
+	  function RootIterator(hooks, iterator) {
+	    _classCallCheck(this, RootIterator);
+
+	    _FlattenIterator.call(this, iterator);
+	    this.hooks = hooks || new Map();
+	  }
+
+	  _inherits(RootIterator, _FlattenIterator);
+
+	  RootIterator.prototype.__next = function __next(value) {
+	    if (value && value["@@knex/hook"]) {
+	      var hookName = value["@@knex/hook"];
+	      var camelized = camelCase(hookName);
+	      if (this.hooks.has(camelized)) {
+	        var hook = first(hooks.get(camelized));
+	      }
+	    }
+	    return _FlattenIterator.prototype.__next.call(this, value);
+	  };
+
+	  return RootIterator;
+	})(FlattenIterator);
+
+	var buffer = function (n) {
 	  return function (xf) {
-	    return transducer(function (step, result, value) {
-	      result = step(result, " ");
-	      return step(result, value);
-	    })(xf);
+	    return new Buffer(n, xf);
 	  };
-	}
+	};
 
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
+	var Buffer = (function (_Transducer) {
+	  function Buffer(n, xf) {
+	    _classCallCheck(this, Buffer);
 
-	"use strict";
-
-	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
-
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	exports.__esModule = true;
-
-	var SELECT = __webpack_require__(28).SELECT;
-
-	var _transduce = __webpack_require__(40);
-
-	var iterator = _transduce.iterator;
-	var iterSymbol = _transduce.iterSymbol;
-
-	var _clauses = __webpack_require__(36);
-
-	var ColumnCompiler = _clauses.ColumnCompiler;
-	var FromCompiler = _clauses.FromCompiler;
-	var WhereCompiler = _clauses.WhereCompiler;
-	var JoinCompiler = _clauses.JoinCompiler;
-	var GroupingCompiler = _clauses.GroupingCompiler;
-	var HavingCompiler = _clauses.HavingCompiler;
-	var OrderingCompiler = _clauses.OrderingCompiler;
-	var LimitCompiler = _clauses.LimitCompiler;
-	var OffsetCompiler = _clauses.OffsetCompiler;
-
-	var QueryCompiler = exports.QueryCompiler = (function () {
-	  function QueryCompiler(container) {
-	    _classCallCheck(this, QueryCompiler);
-
-	    this.container = container;
-	    this["@@knex/hook"] = "expression:query";
+	    _Transducer.call(this, xf);
+	    this.n = n;
+	    this.buffer = [];
 	  }
 
-	  QueryCompiler.prototype[iterSymbol] = function () {
-	    var t = this.container;
-	    return iterator([SELECT, new ColumnCompiler(t.get("columns")), new FromCompiler(t.get("from") || this.get("table")), new WhereCompiler(t.get("wheres")), new JoinCompiler(t.get("joins")), new GroupingCompiler(t.get("groupings")), new HavingCompiler(t.get("havings")), new OrderingCompiler(t.get("orderBy")), new LimitCompiler(t.last("limit")), new OffsetCompiler(t.last("offset"))]);
-	  };
+	  _inherits(Buffer, _Transducer);
 
-	  return QueryCompiler;
-	})();
-
-	var SubQueryCompiler = exports.SubQueryCompiler = (function (_QueryCompiler) {
-	  function SubQueryCompiler() {
-	    _classCallCheck(this, SubQueryCompiler);
-
-	    if (_QueryCompiler != null) {
-	      _QueryCompiler.apply(this, arguments);
+	  Buffer.prototype[tStep] = function (result, value) {
+	    this.buffer.push(value);
+	    if (this.buffer.length === 3) {
+	      return this.xfStep(result, this.buffer);
 	    }
+	    return result;
+	  };
+
+	  Buffer.prototype[tResult] = function (result) {
+	    if (this.buffer.length > 0) {
+	      var buffer = this.buffer;
+	      this.buffer = [];
+	      result = this.xfStep(result, buffer);
+	    }
+	    return this.xfResult(result);
+	  };
+
+	  return Buffer;
+	})(Transducer);
+
+	var AddSpaces = (function (_Transducer2) {
+	  function AddSpaces(xf) {
+	    _classCallCheck(this, AddSpaces);
+
+	    _Transducer2.call(this, xf);
+	    this.started = false;
+	    this.pendingSpace = false;
 	  }
 
-	  _inherits(SubQueryCompiler, _QueryCompiler);
+	  _inherits(AddSpaces, _Transducer2);
 
-	  return SubQueryCompiler;
-	})(QueryCompiler);
+	  AddSpaces.prototype[tStep] = function (result, value) {
+	    var _value = _slicedToArray(value, 2);
+
+	    var a = _value[0];
+	    var b = _value[1];
+
+	    var pendingSpace = this.pendingSpace;
+	    this.pendingSpace = false;
+	    if (pendingSpace) {
+	      result = this.xfStep(result, " ");
+	    }
+	    if (a["@@knex/spacing"] !== "OMIT_FOLLOWING" && b["@@knex/spacing"] !== "OMIT_PRECEDING") {
+	      this.pendingSpace = true;
+	    }
+	    return this.xfStep(result, value.shift());
+	  };
+
+	  return AddSpaces;
+	})(Transducer);
+
+	var addSpaces = compose(buffer(3), function (xf) {
+	  return new AddSpaces(xf);
+	});
+
+	var pipeline = compose(filter(function (val) {
+	  return val !== undefined;
+	}), addSpaces, map(function (val) {
+	  if (val["@@knex/value"]) {
+	    return val["@@knex/value"];
+	  }
+	  return val;
+	}));
 
 /***/ },
-/* 21 */
+/* 20 */,
+/* 21 */,
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -14618,11 +14660,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseCopy = __webpack_require__(37),
-	    keys = __webpack_require__(38);
+	"use strict";
+
+	module.exports = __webpack_require__(98);
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseCopy = __webpack_require__(40),
+	    keys = __webpack_require__(41);
 
 	/**
 	 * The base implementation of `_.assign` without support for argument juggling,
@@ -14659,11 +14709,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 23 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var bindCallback = __webpack_require__(26),
-	    isIterateeCall = __webpack_require__(39);
+	var bindCallback = __webpack_require__(30),
+	    isIterateeCall = __webpack_require__(42);
 
 	/**
 	 * Creates a function that assigns properties of source object(s) to a given
@@ -14712,121 +14762,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * A specialized version of `_.forEach` for arrays without support for callback
-	 * shorthands or `this` binding.
-	 *
-	 * @private
-	 * @param {Array} array The array to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Array} Returns `array`.
-	 */
-	function arrayEach(array, iteratee) {
-	  var index = -1,
-	      length = array.length;
-
-	  while (++index < length) {
-	    if (iteratee(array[index], index, array) === false) {
-	      break;
-	    }
-	  }
-	  return array;
-	}
-
-	module.exports = arrayEach;
-
-
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseForOwn = __webpack_require__(42),
-	    isLength = __webpack_require__(43),
-	    toObject = __webpack_require__(44);
-
-	/**
-	 * The base implementation of `_.forEach` without support for callback
-	 * shorthands and `this` binding.
-	 *
-	 * @private
-	 * @param {Array|Object|string} collection The collection to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Array|Object|string} Returns `collection`.
-	 */
-	function baseEach(collection, iteratee) {
-	  var length = collection ? collection.length : 0;
-	  if (!isLength(length)) {
-	    return baseForOwn(collection, iteratee);
-	  }
-	  var index = -1,
-	      iterable = toObject(collection);
-
-	  while (++index < length) {
-	    if (iteratee(iterable[index], index, iterable) === false) {
-	      break;
-	    }
-	  }
-	  return collection;
-	}
-
-	module.exports = baseEach;
-
-
-/***/ },
 /* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var identity = __webpack_require__(45);
-
-	/**
-	 * A specialized version of `baseCallback` which only supports `this` binding
-	 * and specifying the number of arguments to provide to `func`.
-	 *
-	 * @private
-	 * @param {Function} func The function to bind.
-	 * @param {*} thisArg The `this` binding of `func`.
-	 * @param {number} [argCount] The number of arguments to provide to `func`.
-	 * @returns {Function} Returns the callback.
-	 */
-	function bindCallback(func, thisArg, argCount) {
-	  if (typeof func != 'function') {
-	    return identity;
-	  }
-	  if (typeof thisArg == 'undefined') {
-	    return func;
-	  }
-	  switch (argCount) {
-	    case 1: return function(value) {
-	      return func.call(thisArg, value);
-	    };
-	    case 3: return function(value, index, collection) {
-	      return func.call(thisArg, value, index, collection);
-	    };
-	    case 4: return function(accumulator, value, index, collection) {
-	      return func.call(thisArg, accumulator, value, index, collection);
-	    };
-	    case 5: return function(value, other, key, object, source) {
-	      return func.call(thisArg, value, other, key, object, source);
-	    };
-	  }
-	  return function() {
-	    return func.apply(thisArg, arguments);
-	  };
-	}
-
-	module.exports = bindCallback;
-
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isLength = __webpack_require__(43),
-	    isNative = __webpack_require__(46),
-	    isObjectLike = __webpack_require__(47);
+	var isLength = __webpack_require__(44),
+	    isNative = __webpack_require__(45),
+	    isObjectLike = __webpack_require__(46);
 
 	/** `Object#toString` result references. */
 	var arrayTag = '[object Array]';
@@ -14868,7 +14809,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 28 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -14877,25 +14818,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.__esModule = true;
 
-	var Keyword = (function () {
-	  function Keyword(value) {
-	    _classCallCheck(this, Keyword);
+	var Keyword = function Keyword(value) {
+	  _classCallCheck(this, Keyword);
 
-	    this.value = value;
-	    this.type = "keyword";
-	  }
+	  this["@@knex/value"] = value;
+	  this["@@knex/hook"] = "keyword";
+	};
 
-	  Keyword.prototype.toString = function toString() {
-	    return this.value;
-	  };
-
-	  Keyword.prototype["@@knex/compile"] = function knexCompile() {
-	    return this.value;
-	  };
-
-	  return Keyword;
-	})();
-
+	var _ALL_ = new Keyword("*");
+	exports._ALL_ = _ALL_;
 	var JOIN = new Keyword("JOIN");
 	exports.JOIN = JOIN;
 	var INNER = new Keyword("INNER");
@@ -14940,7 +14871,116 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.IN = IN;
 
 /***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * A specialized version of `_.forEach` for arrays without support for callback
+	 * shorthands or `this` binding.
+	 *
+	 * @private
+	 * @param {Array} array The array to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Array} Returns `array`.
+	 */
+	function arrayEach(array, iteratee) {
+	  var index = -1,
+	      length = array.length;
+
+	  while (++index < length) {
+	    if (iteratee(array[index], index, array) === false) {
+	      break;
+	    }
+	  }
+	  return array;
+	}
+
+	module.exports = arrayEach;
+
+
+/***/ },
 /* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseForOwn = __webpack_require__(47),
+	    isLength = __webpack_require__(44),
+	    toObject = __webpack_require__(48);
+
+	/**
+	 * The base implementation of `_.forEach` without support for callback
+	 * shorthands and `this` binding.
+	 *
+	 * @private
+	 * @param {Array|Object|string} collection The collection to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Array|Object|string} Returns `collection`.
+	 */
+	function baseEach(collection, iteratee) {
+	  var length = collection ? collection.length : 0;
+	  if (!isLength(length)) {
+	    return baseForOwn(collection, iteratee);
+	  }
+	  var index = -1,
+	      iterable = toObject(collection);
+
+	  while (++index < length) {
+	    if (iteratee(iterable[index], index, iterable) === false) {
+	      break;
+	    }
+	  }
+	  return collection;
+	}
+
+	module.exports = baseEach;
+
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var identity = __webpack_require__(49);
+
+	/**
+	 * A specialized version of `baseCallback` which only supports `this` binding
+	 * and specifying the number of arguments to provide to `func`.
+	 *
+	 * @private
+	 * @param {Function} func The function to bind.
+	 * @param {*} thisArg The `this` binding of `func`.
+	 * @param {number} [argCount] The number of arguments to provide to `func`.
+	 * @returns {Function} Returns the callback.
+	 */
+	function bindCallback(func, thisArg, argCount) {
+	  if (typeof func != 'function') {
+	    return identity;
+	  }
+	  if (typeof thisArg == 'undefined') {
+	    return func;
+	  }
+	  switch (argCount) {
+	    case 1: return function(value) {
+	      return func.call(thisArg, value);
+	    };
+	    case 3: return function(value, index, collection) {
+	      return func.call(thisArg, value, index, collection);
+	    };
+	    case 4: return function(accumulator, value, index, collection) {
+	      return func.call(thisArg, accumulator, value, index, collection);
+	    };
+	    case 5: return function(value, other, key, object, source) {
+	      return func.call(thisArg, value, other, key, object, source);
+	    };
+	  }
+	  return function() {
+	    return func.apply(thisArg, arguments);
+	  };
+	}
+
+	module.exports = bindCallback;
+
+
+/***/ },
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -14950,27 +14990,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.identifier = identifier;
 	exports.__esModule = true;
 
-	var Identifier = (function () {
-	  function Identifier(value) {
-	    _classCallCheck(this, Identifier);
+	var Identifier = function Identifier(value) {
+	  _classCallCheck(this, Identifier);
 
-	    this.value = value;
-	    this.type = "identifier";
-	  }
-
-	  Identifier.prototype.compile = function compile() {
-	    return "'" + this.value + "'";
-	  };
-
-	  return Identifier;
-	})();
+	  this["@@knex/value"] = value;
+	  this["@@knex/hook"] = "identifier";
+	};
 
 	function identifier(value) {
+	  if (typeof value !== "string") {
+	    return value;
+	  }
 	  return new Identifier(value);
 	}
 
 /***/ },
-/* 30 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -14979,9 +15014,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
-	var lastVal = _interopRequire(__webpack_require__(48));
+	var lastVal = _interopRequire(__webpack_require__(50));
 
-	var into = __webpack_require__(40).into;
+	var into = __webpack_require__(23).into;
 
 	var TokenContainer = (function () {
 
@@ -15031,101 +15066,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = TokenContainer;
 
 /***/ },
-/* 31 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = {
-	  'clone': __webpack_require__(49),
-	  'cloneDeep': __webpack_require__(50),
-	  'isArguments': __webpack_require__(51),
-	  'isArray': __webpack_require__(27),
-	  'isBoolean': __webpack_require__(52),
-	  'isDate': __webpack_require__(53),
-	  'isElement': __webpack_require__(54),
-	  'isEmpty': __webpack_require__(55),
-	  'isEqual': __webpack_require__(56),
-	  'isError': __webpack_require__(57),
-	  'isFinite': __webpack_require__(58),
-	  'isFunction': __webpack_require__(59),
-	  'isMatch': __webpack_require__(60),
-	  'isNaN': __webpack_require__(61),
-	  'isNative': __webpack_require__(46),
-	  'isNull': __webpack_require__(62),
-	  'isNumber': __webpack_require__(63),
-	  'isObject': __webpack_require__(64),
-	  'isPlainObject': __webpack_require__(65),
-	  'isRegExp': __webpack_require__(66),
-	  'isString': __webpack_require__(67),
-	  'isTypedArray': __webpack_require__(68),
-	  'isUndefined': __webpack_require__(69),
-	  'toArray': __webpack_require__(70),
-	  'toPlainObject': __webpack_require__(71)
-	};
-
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	exports.parameter = parameter;
-	exports.__esModule = true;
-
-	var Parameter = (function () {
-	  function Parameter(value) {
-	    _classCallCheck(this, Parameter);
-
-	    this.value = value;
-	    this.type = "parameter";
-	  }
-
-	  Parameter.prototype.compile = function compile() {
-	    return this.value;
-	  };
-
-	  return Parameter;
-	})();
-
-	function parameter(value) {
-	  return new Parameter(value);
-	}
-
-/***/ },
 /* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	module.exports = {
+	  'clone': __webpack_require__(51),
+	  'cloneDeep': __webpack_require__(52),
+	  'isArguments': __webpack_require__(53),
+	  'isArray': __webpack_require__(26),
+	  'isBoolean': __webpack_require__(54),
+	  'isDate': __webpack_require__(55),
+	  'isElement': __webpack_require__(56),
+	  'isEmpty': __webpack_require__(57),
+	  'isEqual': __webpack_require__(58),
+	  'isError': __webpack_require__(59),
+	  'isFinite': __webpack_require__(60),
+	  'isFunction': __webpack_require__(61),
+	  'isMatch': __webpack_require__(62),
+	  'isNaN': __webpack_require__(63),
+	  'isNative': __webpack_require__(45),
+	  'isNull': __webpack_require__(64),
+	  'isNumber': __webpack_require__(65),
+	  'isObject': __webpack_require__(66),
+	  'isPlainObject': __webpack_require__(67),
+	  'isRegExp': __webpack_require__(68),
+	  'isString': __webpack_require__(69),
+	  'isTypedArray': __webpack_require__(70),
+	  'isUndefined': __webpack_require__(71),
+	  'toArray': __webpack_require__(72),
+	  'toPlainObject': __webpack_require__(73)
+	};
 
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	exports.__esModule = true;
-
-	var INSERT_INTO = __webpack_require__(28).INSERT_INTO;
-
-	var _transduce = __webpack_require__(40);
-
-	var iterator = _transduce.iterator;
-	var iterSymbol = _transduce.iterSymbol;
-
-	var InsertCompiler = exports.InsertCompiler = (function () {
-	  function InsertCompiler(elements) {
-	    _classCallCheck(this, InsertCompiler);
-
-	    this.elements = elements;
-	    this["@@knex/hook"] = "expression:insert";
-	  }
-
-	  InsertCompiler.prototype[iterSymbol] = function () {
-	    var table = this.elements.single.table;
-
-	    return iterator([INSERT_INTO, new TableCompiler(table)]);
-	  };
-
-	  return InsertCompiler;
-	})();
 
 /***/ },
 /* 34 */
@@ -15135,95 +15106,30 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
+	exports.parameter = parameter;
 	exports.__esModule = true;
 
-	var DELETE_FROM = __webpack_require__(28).DELETE_FROM;
+	var Parameter = function Parameter(value) {
+	  _classCallCheck(this, Parameter);
 
-	var _transduce = __webpack_require__(40);
+	  this["@@knex/value"] = value;
+	  this["@@knex/hook"] = "parameter";
+	};
 
-	var iterator = _transduce.iterator;
-	var iterSymbol = _transduce.iterSymbol;
-
-	var DeleteCompiler = exports.DeleteCompiler = (function () {
-	  function DeleteCompiler(elements) {
-	    _classCallCheck(this, DeleteCompiler);
-
-	    this.elements = elements;
-	    this["@@knex/type"] = "statement:delete";
+	function parameter(value) {
+	  if (value === undefined) {
+	    return value;
 	  }
-
-	  DeleteCompiler.prototype[iterSymbol] = function () {
-	    var table = this.elements.single.table;
-
-	    return iterator([DELETE_FROM, table]);
-	  };
-
-	  return DeleteCompiler;
-	})();
+	  return new Parameter(value);
+	}
 
 /***/ },
-/* 35 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	var UPDATE = __webpack_require__(28).UPDATE;
-
-	var WhereCompiler = __webpack_require__(72).WhereCompiler;
-
-	var _transduce = __webpack_require__(40);
-
-	var iterator = _transduce.iterator;
-	var iterSymbol = _transduce.iterSymbol;
-
-	var UpdateCompiler = (function () {
-	  function UpdateCompiler(elements) {
-	    _classCallCheck(this, UpdateCompiler);
-
-	    this.elements = elements;
-	    this.type = "updateStatement";
-	  }
-
-	  UpdateCompiler.prototype[iterSymbol] = function () {
-	    return iterator([UPDATE, table, new WhereCompiler(wheres)]);
-	  };
-
-	  return UpdateCompiler;
-	})();
-
-/***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	exports.__esModule = true;
-	exports.ColumnCompiler = __webpack_require__(73).ColumnCompiler;
-	exports.FromCompiler = __webpack_require__(74).FromCompiler;
-	exports.OffsetCompiler = __webpack_require__(75).OffsetCompiler;
-	exports.LimitCompiler = __webpack_require__(76).LimitCompiler;
-	exports.OrderingCompiler = __webpack_require__(77).OrderingCompiler;
-	exports.GroupingCompiler = __webpack_require__(78).GroupingCompiler;
-
-	var _having = __webpack_require__(79);
-
-	exports.HavingCompiler = _having.HavingCompiler;
-	exports.GroupedHavingCompiler = _having.GroupedHavingCompiler;
-
-	var _where = __webpack_require__(72);
-
-	exports.WhereCompiler = _where.WhereCompiler;
-	exports.GroupedWhereCompiler = _where.GroupedWhereCompiler;
-
-	var _join = __webpack_require__(80);
-
-	exports.JoinCompiler = _join.JoinCompiler;
-	exports.GroupedJoinCompiler = _join.GroupedJoinCompiler;
-
-/***/ },
-/* 37 */
+/* 35 */,
+/* 36 */,
+/* 37 */,
+/* 38 */,
+/* 39 */,
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15254,13 +15160,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 38 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isLength = __webpack_require__(43),
-	    isNative = __webpack_require__(46),
-	    isObject = __webpack_require__(64),
-	    shimKeys = __webpack_require__(81);
+	var isLength = __webpack_require__(44),
+	    isNative = __webpack_require__(45),
+	    isObject = __webpack_require__(66),
+	    shimKeys = __webpack_require__(85);
 
 	/* Native method references for those with the same name as other `lodash` methods. */
 	var nativeKeys = isNative(nativeKeys = Object.keys) && nativeKeys;
@@ -15308,12 +15214,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 39 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isIndex = __webpack_require__(82),
-	    isLength = __webpack_require__(43),
-	    isObject = __webpack_require__(64);
+	var isIndex = __webpack_require__(84),
+	    isLength = __webpack_require__(44),
+	    isObject = __webpack_require__(66);
 
 	/**
 	 * Checks if the provided arguments are from an iteratee call.
@@ -15346,15 +15252,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 40 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	module.exports = __webpack_require__(104);
-
-/***/ },
-/* 41 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(module) {
@@ -15370,30 +15268,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 42 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseFor = __webpack_require__(83),
-	    keys = __webpack_require__(38);
-
-	/**
-	 * The base implementation of `_.forOwn` without support for callback
-	 * shorthands and `this` binding.
-	 *
-	 * @private
-	 * @param {Object} object The object to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Object} Returns `object`.
-	 */
-	function baseForOwn(object, iteratee) {
-	  return baseFor(object, iteratee, keys);
-	}
-
-	module.exports = baseForOwn;
-
-
-/***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15422,57 +15297,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 44 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isObject = __webpack_require__(64);
-
-	/**
-	 * Converts `value` to an object if it is not one.
-	 *
-	 * @private
-	 * @param {*} value The value to process.
-	 * @returns {Object} Returns the object.
-	 */
-	function toObject(value) {
-	  return isObject(value) ? value : Object(value);
-	}
-
-	module.exports = toObject;
-
-
-/***/ },
 /* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * This method returns the first argument provided to it.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Utility
-	 * @param {*} value Any value.
-	 * @returns {*} Returns `value`.
-	 * @example
-	 *
-	 * var object = { 'user': 'fred' };
-	 *
-	 * _.identity(object) === object;
-	 * // => true
-	 */
-	function identity(value) {
-	  return value;
-	}
-
-	module.exports = identity;
-
-
-/***/ },
-/* 46 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var escapeRegExp = __webpack_require__(84),
-	    isObjectLike = __webpack_require__(47);
+	var escapeRegExp = __webpack_require__(86),
+	    isObjectLike = __webpack_require__(46);
 
 	/** `Object#toString` result references. */
 	var funcTag = '[object Function]';
@@ -15529,7 +15358,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 47 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15547,7 +15376,76 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
+/* 47 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseFor = __webpack_require__(87),
+	    keys = __webpack_require__(41);
+
+	/**
+	 * The base implementation of `_.forOwn` without support for callback
+	 * shorthands and `this` binding.
+	 *
+	 * @private
+	 * @param {Object} object The object to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Object} Returns `object`.
+	 */
+	function baseForOwn(object, iteratee) {
+	  return baseFor(object, iteratee, keys);
+	}
+
+	module.exports = baseForOwn;
+
+
+/***/ },
 /* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(66);
+
+	/**
+	 * Converts `value` to an object if it is not one.
+	 *
+	 * @private
+	 * @param {*} value The value to process.
+	 * @returns {Object} Returns the object.
+	 */
+	function toObject(value) {
+	  return isObject(value) ? value : Object(value);
+	}
+
+	module.exports = toObject;
+
+
+/***/ },
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * This method returns the first argument provided to it.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Utility
+	 * @param {*} value Any value.
+	 * @returns {*} Returns `value`.
+	 * @example
+	 *
+	 * var object = { 'user': 'fred' };
+	 *
+	 * _.identity(object) === object;
+	 * // => true
+	 */
+	function identity(value) {
+	  return value;
+	}
+
+	module.exports = identity;
+
+
+/***/ },
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15572,12 +15470,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 49 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseClone = __webpack_require__(85),
-	    bindCallback = __webpack_require__(26),
-	    isIterateeCall = __webpack_require__(39);
+	var baseClone = __webpack_require__(88),
+	    bindCallback = __webpack_require__(30),
+	    isIterateeCall = __webpack_require__(42);
 
 	/**
 	 * Creates a clone of `value`. If `isDeep` is `true` nested objects are cloned,
@@ -15647,11 +15545,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 50 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseClone = __webpack_require__(85),
-	    bindCallback = __webpack_require__(26);
+	var baseClone = __webpack_require__(88),
+	    bindCallback = __webpack_require__(30);
 
 	/**
 	 * Creates a deep clone of `value`. If `customizer` is provided it is invoked
@@ -15707,11 +15605,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isLength = __webpack_require__(43),
-	    isObjectLike = __webpack_require__(47);
+	var isLength = __webpack_require__(44),
+	    isObjectLike = __webpack_require__(46);
 
 	/** `Object#toString` result references. */
 	var argsTag = '[object Arguments]';
@@ -15751,10 +15649,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObjectLike = __webpack_require__(47);
+	var isObjectLike = __webpack_require__(46);
 
 	/** `Object#toString` result references. */
 	var boolTag = '[object Boolean]';
@@ -15793,10 +15691,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 53 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObjectLike = __webpack_require__(47);
+	var isObjectLike = __webpack_require__(46);
 
 	/** `Object#toString` result references. */
 	var dateTag = '[object Date]';
@@ -15835,12 +15733,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObjectLike = __webpack_require__(47),
-	    isPlainObject = __webpack_require__(65),
-	    support = __webpack_require__(86);
+	var isObjectLike = __webpack_require__(46),
+	    isPlainObject = __webpack_require__(67),
+	    support = __webpack_require__(89);
 
 	/** Used for native method references. */
 	var objectProto = Object.prototype;
@@ -15883,16 +15781,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 55 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArguments = __webpack_require__(51),
-	    isArray = __webpack_require__(27),
-	    isFunction = __webpack_require__(59),
-	    isLength = __webpack_require__(43),
-	    isObjectLike = __webpack_require__(47),
-	    isString = __webpack_require__(67),
-	    keys = __webpack_require__(38);
+	var isArguments = __webpack_require__(53),
+	    isArray = __webpack_require__(26),
+	    isFunction = __webpack_require__(61),
+	    isLength = __webpack_require__(44),
+	    isObjectLike = __webpack_require__(46),
+	    isString = __webpack_require__(69),
+	    keys = __webpack_require__(41);
 
 	/**
 	 * Checks if `value` is empty. A value is considered empty unless it is an
@@ -15937,12 +15835,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 56 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsEqual = __webpack_require__(87),
-	    bindCallback = __webpack_require__(26),
-	    isStrictComparable = __webpack_require__(88);
+	var baseIsEqual = __webpack_require__(90),
+	    bindCallback = __webpack_require__(30),
+	    isStrictComparable = __webpack_require__(91);
 
 	/**
 	 * Performs a deep comparison between two values to determine if they are
@@ -16000,10 +15898,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 57 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObjectLike = __webpack_require__(47);
+	var isObjectLike = __webpack_require__(46);
 
 	/** `Object#toString` result references. */
 	var errorTag = '[object Error]';
@@ -16043,10 +15941,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 58 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var isNative = __webpack_require__(46);
+	/* WEBPACK VAR INJECTION */(function(global) {var isNative = __webpack_require__(45);
 
 	/* Native method references for those with the same name as other `lodash` methods. */
 	var nativeIsFinite = global.isFinite,
@@ -16090,11 +15988,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 59 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var baseIsFunction = __webpack_require__(89),
-	    isNative = __webpack_require__(46);
+	/* WEBPACK VAR INJECTION */(function(global) {var baseIsFunction = __webpack_require__(92),
+	    isNative = __webpack_require__(45);
 
 	/** `Object#toString` result references. */
 	var funcTag = '[object Function]';
@@ -16140,13 +16038,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 60 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsMatch = __webpack_require__(90),
-	    bindCallback = __webpack_require__(26),
-	    isStrictComparable = __webpack_require__(88),
-	    keys = __webpack_require__(38);
+	var baseIsMatch = __webpack_require__(93),
+	    bindCallback = __webpack_require__(30),
+	    isStrictComparable = __webpack_require__(91),
+	    keys = __webpack_require__(41);
 
 	/** Used for native method references. */
 	var objectProto = Object.prototype;
@@ -16220,10 +16118,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 61 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isNumber = __webpack_require__(63);
+	var isNumber = __webpack_require__(65);
 
 	/**
 	 * Checks if `value` is `NaN`.
@@ -16261,7 +16159,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 62 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16288,10 +16186,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 63 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObjectLike = __webpack_require__(47);
+	var isObjectLike = __webpack_require__(46);
 
 	/** `Object#toString` result references. */
 	var numberTag = '[object Number]';
@@ -16336,7 +16234,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 64 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16372,11 +16270,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 65 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isNative = __webpack_require__(46),
-	    shimIsPlainObject = __webpack_require__(91);
+	var isNative = __webpack_require__(45),
+	    shimIsPlainObject = __webpack_require__(94);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -16440,10 +16338,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 66 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObjectLike = __webpack_require__(47);
+	var isObjectLike = __webpack_require__(46);
 
 	/** `Object#toString` result references. */
 	var regexpTag = '[object RegExp]';
@@ -16482,10 +16380,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 67 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObjectLike = __webpack_require__(47);
+	var isObjectLike = __webpack_require__(46);
 
 	/** `Object#toString` result references. */
 	var stringTag = '[object String]';
@@ -16524,11 +16422,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 68 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isLength = __webpack_require__(43),
-	    isObjectLike = __webpack_require__(47);
+	var isLength = __webpack_require__(44),
+	    isObjectLike = __webpack_require__(46);
 
 	/** `Object#toString` result references. */
 	var argsTag = '[object Arguments]',
@@ -16605,7 +16503,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 69 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16632,12 +16530,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 70 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayCopy = __webpack_require__(92),
-	    isLength = __webpack_require__(43),
-	    values = __webpack_require__(93);
+	var arrayCopy = __webpack_require__(95),
+	    isLength = __webpack_require__(44),
+	    values = __webpack_require__(96);
 
 	/**
 	 * Converts `value` to an array.
@@ -16669,11 +16567,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 71 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseCopy = __webpack_require__(37),
-	    keysIn = __webpack_require__(94);
+	var baseCopy = __webpack_require__(40),
+	    keysIn = __webpack_require__(97);
 
 	/**
 	 * Converts `value` to a plain object flattening inherited enumerable
@@ -16706,155 +16604,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 72 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
-
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	exports.__esModule = true;
-
-	var isArray = __webpack_require__(31).isArray;
-
-	var _sqlDelimiters = __webpack_require__(95);
-
-	var LEFT_PAREN = _sqlDelimiters.LEFT_PAREN;
-	var RIGHT_PAREN = _sqlDelimiters.RIGHT_PAREN;
-
-	var _sqlKeywords = __webpack_require__(28);
-
-	var AND = _sqlKeywords.AND;
-	var OR = _sqlKeywords.OR;
-	var NOT = _sqlKeywords.NOT;
-	var WHERE = _sqlKeywords.WHERE;
-
-	var i = __webpack_require__(29).identifier;
-
-	var p = __webpack_require__(32).parameter;
-
-	var dropFirstClause = __webpack_require__(96).dropFirstClause;
-
-	var _transduce = __webpack_require__(40);
-
-	var map = _transduce.map;
-	var seq = _transduce.seq;
-	var iterator = _transduce.iterator;
-	var iterSymbol = _transduce.iterSymbol;
-
-	var WhereClauseCompiler = exports.WhereClauseCompiler = (function () {
-	  function WhereClauseCompiler(where) {
-	    _classCallCheck(this, WhereClauseCompiler);
-
-	    this.where = where;
-	    this["@@knex/type"] = "clause:where";
-	  }
-
-	  // [WHERE | AND | OR] [NOT] [EXISTS | BETWEEN | IN] value
-
-	  WhereClauseCompiler.prototype[iterSymbol] = function () {
-	    var _ref = this;
-
-	    var where = _ref.where;
-
-	    if (isArray(where)) {
-	      return seq(map(function (val) {
-	        return new WhereClauseCompiler(val);
-	      }), where);
-	    }
-	    return iterator([where.__or ? OR : AND, where.__negated ? NOT : undefined, i(where.column), where.operator, p(where.value)]);
-	  };
-
-	  return WhereClauseCompiler;
-	})();
-
-	var WhereCompiler = exports.WhereCompiler = (function () {
-	  function WhereCompiler(wheres) {
-	    _classCallCheck(this, WhereCompiler);
-
-	    this.wheres = wheres;
-	  }
-
-	  WhereCompiler.prototype["@@knex/compile"] = function knexCompile() {
-	    return dropFirstClause(WhereClauseCompiler, WHERE, this.wheres);
-	  };
-
-	  return WhereCompiler;
-	})();
-
-	var GroupedWhereCompiler = exports.GroupedWhereCompiler = (function (_WhereCompiler) {
-	  function GroupedWhereCompiler() {
-	    _classCallCheck(this, GroupedWhereCompiler);
-
-	    if (_WhereCompiler != null) {
-	      _WhereCompiler.apply(this, arguments);
-	    }
-	  }
-
-	  _inherits(GroupedWhereCompiler, _WhereCompiler);
-
-	  return GroupedWhereCompiler;
-	})(WhereCompiler);
-
-/***/ },
-/* 73 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	exports.__esModule = true;
-
-	var isArray = __webpack_require__(4).isArray;
-
-	var COMMA = __webpack_require__(95).COMMA;
-
-	var _ALL_ = __webpack_require__(28)._ALL_;
-
-	var i = __webpack_require__(29).identifier;
-
-	var _transduce = __webpack_require__(40);
-
-	var seq = _transduce.seq;
-	var compose = _transduce.compose;
-	var map = _transduce.map;
-	var filter = _transduce.filter;
-	var into = _transduce.into;
-	var transducer = _transduce.transducer;
-	var interpose = _transduce.interpose;
-	var iterSymbol = _transduce.iterSymbol;
-
-	var pipeline = compose(transducer(function (step, result, value) {
-	  if (isArray(value)) return into(result, pipeline, value);
-	  return step(result, value);
-	}), map(function (value) {
-	  return i(value);
-	}), filter(function (value) {
-	  return value !== undefined;
-	}), interpose(COMMA));
-
-	var ColumnCompiler = exports.ColumnCompiler = (function () {
-	  function ColumnCompiler(columns) {
-	    _classCallCheck(this, ColumnCompiler);
-
-	    this.columns = columns;
-	    this["@@knex/hook"] = "columns";
-	  }
-
-	  ColumnCompiler.prototype[iterSymbol] = function () {
-	    if (this.columns.length === 0) {
-	      return _ALL_;
-	    }
-	    return seq(pipeline, this.columns);
-	  };
-
-	  return ColumnCompiler;
-	})();
-
-/***/ },
 /* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -16864,241 +16613,74 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.__esModule = true;
 
-	var FROM = __webpack_require__(28).FROM;
+	var Delimiter = function Delimiter(value, spacing) {
+	  _classCallCheck(this, Delimiter);
 
-	var _transduce = __webpack_require__(40);
+	  this["@@knex/hook"] = "delimiter";
+	  this["@@knex/value"] = value;
+	  this["@@knex/spacing"] = spacing;
+	};
 
-	var iterable = _transduce.iterable;
-	var iterSymbol = _transduce.iterSymbol;
+	function delimiter(value, spacing) {
+	  return new Delimiter(value, spacing);
+	}
 
-	var FromCompiler = exports.FromCompiler = (function () {
-	  function FromCompiler(value) {
-	    _classCallCheck(this, FromCompiler);
-
-	    this.value = value;
-	    this.distinct = false;
-	    this.alias = undefined;
-	    this["@@knex/hook"] = "clause:from";
-	  }
-
-	  FromCompiler.prototype["@@knex/compile"] = function knexCompile() {
-	    return iterable([FROM, this.value]);
-	  };
-
-	  return FromCompiler;
-	})();
+	var COMMA = delimiter(",", "OMIT_PRECEDING");
+	exports.COMMA = COMMA;
+	var SEMICOLON = delimiter(";", "OMIT_PRECEDING");
+	exports.SEMICOLON = SEMICOLON;
+	var LEFT_PAREN = delimiter("(", "OMIT_FOLLOWING");
+	exports.LEFT_PAREN = LEFT_PAREN;
+	var RIGHT_PAREN = delimiter(")", "OMIT_PRECEDING");
+	exports.RIGHT_PAREN = RIGHT_PAREN;
 
 /***/ },
-/* 75 */
+/* 75 */,
+/* 76 */,
+/* 77 */,
+/* 78 */,
+/* 79 */,
+/* 80 */,
+/* 81 */,
+/* 82 */,
+/* 83 */,
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	/**
+	 * Used as the maximum length of an array-like value.
+	 * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+	 * for more details.
+	 */
+	var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
 
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+	/**
+	 * Checks if `value` is a valid array-like index.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+	 */
+	function isIndex(value, length) {
+	  value = +value;
+	  length = length == null ? MAX_SAFE_INTEGER : length;
+	  return value > -1 && value % 1 == 0 && value < length;
+	}
 
-	exports.__esModule = true;
+	module.exports = isIndex;
 
-	var OFFSET = __webpack_require__(28).OFFSET;
-
-	var OffsetCompiler = exports.OffsetCompiler = (function () {
-	  function OffsetCompiler(value) {
-	    _classCallCheck(this, OffsetCompiler);
-
-	    this.value = value;
-	    this.type = "clause:offset";
-	  }
-
-	  OffsetCompiler.prototype["@@knex/compile"] = function knexCompile() {
-	    if (!this.value) {
-	      return;
-	    }return [OFFSET, this.value];
-	  };
-
-	  return OffsetCompiler;
-	})();
 
 /***/ },
-/* 76 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	exports.__esModule = true;
-
-	var LIMIT = __webpack_require__(28).LIMIT;
-
-	var LimitCompiler = exports.LimitCompiler = (function () {
-	  function LimitCompiler(value) {
-	    _classCallCheck(this, LimitCompiler);
-
-	    this.value = value;
-	    this.type = "clause:limit";
-	  }
-
-	  LimitCompiler.prototype["@@knex/compile"] = function knexCompile() {
-	    if (!this.value) {
-	      return;
-	    }return [LIMIT, this.value];
-	  };
-
-	  return LimitCompiler;
-	})();
-
-/***/ },
-/* 77 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	exports.__esModule = true;
-
-	var ORDER_BY = __webpack_require__(28).ORDER_BY;
-
-	var OrderingCompiler = exports.OrderingCompiler = (function () {
-	  function OrderingCompiler(value) {
-	    _classCallCheck(this, OrderingCompiler);
-
-	    this.value = value;
-	    this.type = "clause:order";
-	  }
-
-	  OrderingCompiler.prototype["@@knex/compile"] = function knexCompile() {
-	    if (!this.value) {
-	      return;
-	    }return [ORDER_BY, value];
-	  };
-
-	  return OrderingCompiler;
-	})();
-
-/***/ },
-/* 78 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	exports.__esModule = true;
-
-	var GROUP_BY = __webpack_require__(28).GROUP_BY;
-
-	var _transduce = __webpack_require__(40);
-
-	var iterable = _transduce.iterable;
-	var iterSymbol = _transduce.iterSymbol;
-	var itercomplete = _transduce.itercomplete;
-
-	var GroupingCompiler = exports.GroupingCompiler = (function () {
-	  function GroupingCompiler(value) {
-	    _classCallCheck(this, GroupingCompiler);
-
-	    this.groupings = value;
-	  }
-
-	  GroupingCompiler.prototype[iterSymbol] = function () {
-	    if (!this.groupings) return itercomplete;
-	    return iterable([GROUP_BY, this.groupings]);
-	  };
-
-	  return GroupingCompiler;
-	})();
-
-/***/ },
-/* 79 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
-
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	exports.__esModule = true;
-
-	var _sqlDelimiters = __webpack_require__(95);
-
-	var LEFT_PAREN = _sqlDelimiters.LEFT_PAREN;
-	var RIGHT_PAREN = _sqlDelimiters.RIGHT_PAREN;
-
-	var HavingCompiler = exports.HavingCompiler = (function () {
-	  function HavingCompiler() {
-	    _classCallCheck(this, HavingCompiler);
-	  }
-
-	  HavingCompiler.prototype["@@knex/compile"] = function knexCompile() {};
-
-	  return HavingCompiler;
-	})();
-
-	var GroupedHavingCompiler = exports.GroupedHavingCompiler = (function (_HavingCompiler) {
-	  function GroupedHavingCompiler() {
-	    _classCallCheck(this, GroupedHavingCompiler);
-
-	    if (_HavingCompiler != null) {
-	      _HavingCompiler.apply(this, arguments);
-	    }
-	  }
-
-	  _inherits(GroupedHavingCompiler, _HavingCompiler);
-
-	  GroupedHavingCompiler.prototype["@@knex/compile"] = function knexCompile() {
-	    return [LEFT_PAREN, dropFirstClause(HavingCompiler, this.havings), RIGHT_PAREN];
-	  };
-
-	  return GroupedHavingCompiler;
-	})(HavingCompiler);
-
-/***/ },
-/* 80 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
-
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	exports.__esModule = true;
-
-	var JoinCompiler = exports.JoinCompiler = (function () {
-	  function JoinCompiler() {
-	    _classCallCheck(this, JoinCompiler);
-	  }
-
-	  JoinCompiler.prototype["@@knex/compile"] = function knexCompile() {};
-
-	  return JoinCompiler;
-	})();
-
-	var GroupedJoinCompiler = exports.GroupedJoinCompiler = (function (_JoinCompiler) {
-	  function GroupedJoinCompiler() {
-	    _classCallCheck(this, GroupedJoinCompiler);
-
-	    if (_JoinCompiler != null) {
-	      _JoinCompiler.apply(this, arguments);
-	    }
-	  }
-
-	  _inherits(GroupedJoinCompiler, _JoinCompiler);
-
-	  return GroupedJoinCompiler;
-	})(JoinCompiler);
-
-/***/ },
-/* 81 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isArguments = __webpack_require__(51),
-	    isArray = __webpack_require__(27),
-	    isIndex = __webpack_require__(82),
-	    isLength = __webpack_require__(43),
-	    keysIn = __webpack_require__(94),
-	    support = __webpack_require__(86);
+	var isArguments = __webpack_require__(53),
+	    isArray = __webpack_require__(26),
+	    isIndex = __webpack_require__(84),
+	    isLength = __webpack_require__(44),
+	    keysIn = __webpack_require__(97),
+	    support = __webpack_require__(89);
 
 	/** Used for native method references. */
 	var objectProto = Object.prototype;
@@ -17138,74 +16720,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 82 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * Used as the maximum length of an array-like value.
-	 * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
-	 * for more details.
-	 */
-	var MAX_SAFE_INTEGER = Math.pow(2, 53) - 1;
-
-	/**
-	 * Checks if `value` is a valid array-like index.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
-	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
-	 */
-	function isIndex(value, length) {
-	  value = +value;
-	  length = length == null ? MAX_SAFE_INTEGER : length;
-	  return value > -1 && value % 1 == 0 && value < length;
-	}
-
-	module.exports = isIndex;
-
-
-/***/ },
-/* 83 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var toObject = __webpack_require__(44);
-
-	/**
-	 * The base implementation of `baseForIn` and `baseForOwn` which iterates
-	 * over `object` properties returned by `keysFunc` invoking `iteratee` for
-	 * each property. Iterator functions may exit iteration early by explicitly
-	 * returning `false`.
-	 *
-	 * @private
-	 * @param {Object} object The object to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @param {Function} keysFunc The function to get the keys of `object`.
-	 * @returns {Object} Returns `object`.
-	 */
-	function baseFor(object, iteratee, keysFunc) {
-	  var index = -1,
-	      iterable = toObject(object),
-	      props = keysFunc(object),
-	      length = props.length;
-
-	  while (++index < length) {
-	    var key = props[index];
-	    if (iteratee(iterable[key], key, iterable) === false) {
-	      break;
-	    }
-	  }
-	  return object;
-	}
-
-	module.exports = baseFor;
-
-
-/***/ },
-/* 84 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseToString = __webpack_require__(97);
+	var baseToString = __webpack_require__(99);
 
 	/**
 	 * Used to match `RegExp` special characters.
@@ -17240,19 +16758,55 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 85 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayCopy = __webpack_require__(92),
-	    arrayEach = __webpack_require__(24),
-	    baseCopy = __webpack_require__(37),
-	    baseForOwn = __webpack_require__(42),
-	    initCloneArray = __webpack_require__(98),
-	    initCloneByTag = __webpack_require__(99),
-	    initCloneObject = __webpack_require__(100),
-	    isArray = __webpack_require__(27),
-	    isObject = __webpack_require__(64),
-	    keys = __webpack_require__(38);
+	var toObject = __webpack_require__(48);
+
+	/**
+	 * The base implementation of `baseForIn` and `baseForOwn` which iterates
+	 * over `object` properties returned by `keysFunc` invoking `iteratee` for
+	 * each property. Iterator functions may exit iteration early by explicitly
+	 * returning `false`.
+	 *
+	 * @private
+	 * @param {Object} object The object to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @param {Function} keysFunc The function to get the keys of `object`.
+	 * @returns {Object} Returns `object`.
+	 */
+	function baseFor(object, iteratee, keysFunc) {
+	  var index = -1,
+	      iterable = toObject(object),
+	      props = keysFunc(object),
+	      length = props.length;
+
+	  while (++index < length) {
+	    var key = props[index];
+	    if (iteratee(iterable[key], key, iterable) === false) {
+	      break;
+	    }
+	  }
+	  return object;
+	}
+
+	module.exports = baseFor;
+
+
+/***/ },
+/* 88 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var arrayCopy = __webpack_require__(95),
+	    arrayEach = __webpack_require__(28),
+	    baseCopy = __webpack_require__(40),
+	    baseForOwn = __webpack_require__(47),
+	    initCloneArray = __webpack_require__(100),
+	    initCloneByTag = __webpack_require__(101),
+	    initCloneObject = __webpack_require__(102),
+	    isArray = __webpack_require__(26),
+	    isObject = __webpack_require__(66),
+	    keys = __webpack_require__(41);
 
 	/** `Object#toString` result references. */
 	var argsTag = '[object Arguments]',
@@ -17376,10 +16930,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 86 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var isNative = __webpack_require__(46);
+	/* WEBPACK VAR INJECTION */(function(global) {var isNative = __webpack_require__(45);
 
 	/** Used to detect functions containing a `this` reference. */
 	var reThis = /\bthis\b/;
@@ -17458,10 +17012,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 87 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsEqualDeep = __webpack_require__(101);
+	var baseIsEqualDeep = __webpack_require__(103);
 
 	/**
 	 * The base implementation of `_.isEqual` without support for `this` binding
@@ -17498,10 +17052,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 88 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(64);
+	var isObject = __webpack_require__(66);
 
 	/**
 	 * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
@@ -17519,7 +17073,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 89 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17540,10 +17094,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 90 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseIsEqual = __webpack_require__(87);
+	var baseIsEqual = __webpack_require__(90);
 
 	/** Used for native method references. */
 	var objectProto = Object.prototype;
@@ -17604,11 +17158,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 91 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseForIn = __webpack_require__(102),
-	    isObjectLike = __webpack_require__(47);
+	var baseForIn = __webpack_require__(104),
+	    isObjectLike = __webpack_require__(46);
 
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -17661,7 +17215,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 92 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17687,11 +17241,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 93 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseValues = __webpack_require__(103),
-	    keys = __webpack_require__(38);
+	var baseValues = __webpack_require__(105),
+	    keys = __webpack_require__(41);
 
 	/**
 	 * Creates an array of the own enumerable property values of `object`.
@@ -17726,15 +17280,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 94 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArguments = __webpack_require__(51),
-	    isArray = __webpack_require__(27),
-	    isIndex = __webpack_require__(82),
-	    isLength = __webpack_require__(43),
-	    isObject = __webpack_require__(64),
-	    support = __webpack_require__(86);
+	var isArguments = __webpack_require__(53),
+	    isArray = __webpack_require__(26),
+	    isIndex = __webpack_require__(84),
+	    isLength = __webpack_require__(44),
+	    isObject = __webpack_require__(66),
+	    support = __webpack_require__(89);
 
 	/** Used for native method references. */
 	var objectProto = Object.prototype;
@@ -17797,363 +17351,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 95 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	exports.__esModule = true;
-
-	var Delimiter = (function () {
-	  function Delimiter(value) {
-	    _classCallCheck(this, Delimiter);
-
-	    this.value = value;
-	    this.type = "delimiter";
-	  }
-
-	  Delimiter.prototype.compile = function compile() {
-	    return this.value;
-	  };
-
-	  return Delimiter;
-	})();
-
-	function delimiter(value) {
-	  return new Delimiter(value);
-	}
-
-	var COMMA = delimiter(",");
-	exports.COMMA = COMMA;
-	var SEMICOLON = delimiter(";");
-	exports.SEMICOLON = SEMICOLON;
-	var LEFT_PAREN = delimiter("(");
-	exports.LEFT_PAREN = LEFT_PAREN;
-	var RIGHT_PAREN = delimiter(")");
-	exports.RIGHT_PAREN = RIGHT_PAREN;
-
-/***/ },
-/* 96 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _interopRequireWildcard = function (obj) { return obj && obj.__esModule ? obj : { "default": obj }; };
-
-	var _defaults = function (obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; };
-
-	exports.__esModule = true;
-
-	_defaults(exports, _interopRequireWildcard(__webpack_require__(105)));
-
-/***/ },
-/* 97 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Converts `value` to a string if it is not one. An empty string is returned
-	 * for `null` or `undefined` values.
-	 *
-	 * @private
-	 * @param {*} value The value to process.
-	 * @returns {string} Returns the string.
-	 */
-	function baseToString(value) {
-	  if (typeof value == 'string') {
-	    return value;
-	  }
-	  return value == null ? '' : (value + '');
-	}
-
-	module.exports = baseToString;
-
-
-/***/ },
 /* 98 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Initializes an array clone.
-	 *
-	 * @private
-	 * @param {Array} array The array to clone.
-	 * @returns {Array} Returns the initialized clone.
-	 */
-	function initCloneArray(array) {
-	  var length = array.length,
-	      result = new array.constructor(length);
-
-	  // Add array properties assigned by `RegExp#exec`.
-	  if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
-	    result.index = array.index;
-	    result.input = array.input;
-	  }
-	  return result;
-	}
-
-	module.exports = initCloneArray;
-
-
-/***/ },
-/* 99 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var bufferClone = __webpack_require__(106);
-
-	/** `Object#toString` result references. */
-	var boolTag = '[object Boolean]',
-	    dateTag = '[object Date]',
-	    numberTag = '[object Number]',
-	    regexpTag = '[object RegExp]',
-	    stringTag = '[object String]';
-
-	var arrayBufferTag = '[object ArrayBuffer]',
-	    float32Tag = '[object Float32Array]',
-	    float64Tag = '[object Float64Array]',
-	    int8Tag = '[object Int8Array]',
-	    int16Tag = '[object Int16Array]',
-	    int32Tag = '[object Int32Array]',
-	    uint8Tag = '[object Uint8Array]',
-	    uint8ClampedTag = '[object Uint8ClampedArray]',
-	    uint16Tag = '[object Uint16Array]',
-	    uint32Tag = '[object Uint32Array]';
-
-	/** Used to match `RegExp` flags from their coerced string values. */
-	var reFlags = /\w*$/;
-
-	/**
-	 * Initializes an object clone based on its `toStringTag`.
-	 *
-	 * **Note:** This function only supports cloning values with tags of
-	 * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
-	 *
-	 *
-	 * @private
-	 * @param {Object} object The object to clone.
-	 * @param {string} tag The `toStringTag` of the object to clone.
-	 * @param {boolean} [isDeep] Specify a deep clone.
-	 * @returns {Object} Returns the initialized clone.
-	 */
-	function initCloneByTag(object, tag, isDeep) {
-	  var Ctor = object.constructor;
-	  switch (tag) {
-	    case arrayBufferTag:
-	      return bufferClone(object);
-
-	    case boolTag:
-	    case dateTag:
-	      return new Ctor(+object);
-
-	    case float32Tag: case float64Tag:
-	    case int8Tag: case int16Tag: case int32Tag:
-	    case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
-	      var buffer = object.buffer;
-	      return new Ctor(isDeep ? bufferClone(buffer) : buffer, object.byteOffset, object.length);
-
-	    case numberTag:
-	    case stringTag:
-	      return new Ctor(object);
-
-	    case regexpTag:
-	      var result = new Ctor(object.source, reFlags.exec(object));
-	      result.lastIndex = object.lastIndex;
-	  }
-	  return result;
-	}
-
-	module.exports = initCloneByTag;
-
-
-/***/ },
-/* 100 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Initializes an object clone.
-	 *
-	 * @private
-	 * @param {Object} object The object to clone.
-	 * @returns {Object} Returns the initialized clone.
-	 */
-	function initCloneObject(object) {
-	  var Ctor = object.constructor;
-	  if (!(typeof Ctor == 'function' && Ctor instanceof Ctor)) {
-	    Ctor = Object;
-	  }
-	  return new Ctor;
-	}
-
-	module.exports = initCloneObject;
-
-
-/***/ },
-/* 101 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var equalArrays = __webpack_require__(107),
-	    equalByTag = __webpack_require__(108),
-	    equalObjects = __webpack_require__(109),
-	    isArray = __webpack_require__(27),
-	    isTypedArray = __webpack_require__(68);
-
-	/** `Object#toString` result references. */
-	var argsTag = '[object Arguments]',
-	    arrayTag = '[object Array]',
-	    objectTag = '[object Object]';
-
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Used to resolve the `toStringTag` of values.
-	 * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
-	 * for more details.
-	 */
-	var objToString = objectProto.toString;
-
-	/**
-	 * A specialized version of `baseIsEqual` for arrays and objects which performs
-	 * deep comparisons and tracks traversed objects enabling objects with circular
-	 * references to be compared.
-	 *
-	 * @private
-	 * @param {Object} object The object to compare.
-	 * @param {Object} other The other object to compare.
-	 * @param {Function} equalFunc The function to determine equivalents of values.
-	 * @param {Function} [customizer] The function to customize comparing objects.
-	 * @param {boolean} [isWhere] Specify performing partial comparisons.
-	 * @param {Array} [stackA=[]] Tracks traversed `value` objects.
-	 * @param {Array} [stackB=[]] Tracks traversed `other` objects.
-	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
-	 */
-	function baseIsEqualDeep(object, other, equalFunc, customizer, isWhere, stackA, stackB) {
-	  var objIsArr = isArray(object),
-	      othIsArr = isArray(other),
-	      objTag = arrayTag,
-	      othTag = arrayTag;
-
-	  if (!objIsArr) {
-	    objTag = objToString.call(object);
-	    if (objTag == argsTag) {
-	      objTag = objectTag;
-	    } else if (objTag != objectTag) {
-	      objIsArr = isTypedArray(object);
-	    }
-	  }
-	  if (!othIsArr) {
-	    othTag = objToString.call(other);
-	    if (othTag == argsTag) {
-	      othTag = objectTag;
-	    } else if (othTag != objectTag) {
-	      othIsArr = isTypedArray(other);
-	    }
-	  }
-	  var objIsObj = objTag == objectTag,
-	      othIsObj = othTag == objectTag,
-	      isSameTag = objTag == othTag;
-
-	  if (isSameTag && !(objIsArr || objIsObj)) {
-	    return equalByTag(object, other, objTag);
-	  }
-	  var valWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
-	      othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
-
-	  if (valWrapped || othWrapped) {
-	    return equalFunc(valWrapped ? object.value() : object, othWrapped ? other.value() : other, customizer, isWhere, stackA, stackB);
-	  }
-	  if (!isSameTag) {
-	    return false;
-	  }
-	  // Assume cyclic values are equal.
-	  // For more information on detecting circular references see https://es5.github.io/#JO.
-	  stackA || (stackA = []);
-	  stackB || (stackB = []);
-
-	  var length = stackA.length;
-	  while (length--) {
-	    if (stackA[length] == object) {
-	      return stackB[length] == other;
-	    }
-	  }
-	  // Add `object` and `other` to the stack of traversed objects.
-	  stackA.push(object);
-	  stackB.push(other);
-
-	  var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, isWhere, stackA, stackB);
-
-	  stackA.pop();
-	  stackB.pop();
-
-	  return result;
-	}
-
-	module.exports = baseIsEqualDeep;
-
-
-/***/ },
-/* 102 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseFor = __webpack_require__(83),
-	    keysIn = __webpack_require__(94);
-
-	/**
-	 * The base implementation of `_.forIn` without support for callback
-	 * shorthands and `this` binding.
-	 *
-	 * @private
-	 * @param {Object} object The object to iterate over.
-	 * @param {Function} iteratee The function invoked per iteration.
-	 * @returns {Object} Returns `object`.
-	 */
-	function baseForIn(object, iteratee) {
-	  return baseFor(object, iteratee, keysIn);
-	}
-
-	module.exports = baseForIn;
-
-
-/***/ },
-/* 103 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * The base implementation of `_.values` and `_.valuesIn` which creates an
-	 * array of `object` property values corresponding to the property names
-	 * returned by `keysFunc`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {Array} props The property names to get values for.
-	 * @returns {Object} Returns the array of property values.
-	 */
-	function baseValues(object, props) {
-	  var index = -1,
-	      length = props.length,
-	      result = Array(length);
-
-	  while (++index < length) {
-	    result[index] = object[props[index]];
-	  }
-	  return result;
-	}
-
-	module.exports = baseValues;
-
-
-/***/ },
-/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18536,7 +17734,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 				'use strict';
 
-				var _lastValue, _stepTransformer;
+				var _iterdone, _lastValue, _lazyTransformer, _stepTransformer;
+
+				var _inherits = function _inherits(subClass, superClass) {
+					if (typeof superClass !== 'function' && superClass !== null) {
+						throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
+					}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) subClass.__proto__ = superClass;
+				};
 
 				var _classCallCheck = function _classCallCheck(instance, Constructor) {
 					if (!(instance instanceof Constructor)) {
@@ -18546,6 +17750,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 				exports.__esModule = true;
 				exports.isIterable = isIterable;
+				exports.isIterator = isIterator;
 
 				// Compose multiple transducers
 				exports.compose = compose;
@@ -18586,8 +17791,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 				// Sequence / Laziness
 
-				exports.seqable = seqable;
-				exports.seq = seq;
+				exports.lazySeq = lazySeq;
 				// 'duce
 				// ES6 Transducers inspired by "transduce"
 
@@ -18603,17 +17807,121 @@ return /******/ (function(modules) { // webpackBootstrap
 				var tReduced = '@@transducer/reduced';
 				var tValue = '@@transducer/value';
 
+				var Transducer = (function () {
+					function Transducer(xf) {
+						_classCallCheck(this, Transducer);
+
+						this.xf = xf;
+					}
+
+					Transducer.prototype[tInit] = function () {
+						return this.init();
+					};
+
+					Transducer.prototype.xfInit = function xfInit() {
+						return this.xf[tInit]();
+					};
+
+					Transducer.prototype[tStep] = function (value, input) {
+						return this.xfStep(value, input);
+					};
+
+					Transducer.prototype.xfStep = function xfStep(value, input) {
+						return this.xf[tStep](value, input);
+					};
+
+					Transducer.prototype[tResult] = function (value) {
+						return this.xfResult(value);
+					};
+
+					Transducer.prototype.xfResult = function xfResult(value) {
+						return this.xf[tResult](value);
+					};
+
+					return Transducer;
+				})();
+
+				exports.Transducer = Transducer;
+
+				var FlattenIterator = (function () {
+					function FlattenIterator(iterator, skip) {
+						_classCallCheck(this, FlattenIterator);
+
+						this.iterator = iterator;
+						this.skip = skip || function noop() {};
+						this.complete = false;
+						this.buffer = [];
+						this.stack = [];
+					}
+
+					FlattenIterator.prototype.next = function next() {
+						if (this.complete) {
+							return DONE;
+						}if (this.buffer.length > 0) {
+							return { done: false, value: this.buffer.shift() };
+						}
+						return this.__cycle();
+					};
+
+					FlattenIterator.prototype.__cycle = function __cycle() {
+						if (!isIterator(this.iterator)) {
+							throw new TypeError('Invalid iterator value: ' + this.iterator);
+						}
+
+						var _iterator$next = this.iterator.next();
+
+						var done = _iterator$next.done;
+						var value = _iterator$next.value;
+
+						if (done) {
+							if (this.stack.length === 0) {
+								this.complete = true;
+							} else {
+								this.iterator = this.stack.pop();
+							}
+							return this.next();
+						}
+						return this.__next(value);
+					};
+
+					FlattenIterator.prototype.__next = function __next(value) {
+						if (typeof value === 'string' || !isIterable(value) && !isIterator(value)) {
+							this.buffer.push(value);
+						} else if (isIterable(value) || isIterator(value)) {
+							if (this.skip(value)) {
+								this.buffer.push(value);
+							} else {
+								this.stack.push(this.iterator);
+								this.iterator = isIterator(value) ? value : iterator(value);
+							}
+						}
+						return this.next();
+					};
+
+					FlattenIterator.prototype[iterSymbol] = function () {
+						return this;
+					};
+
+					return FlattenIterator;
+				})();
+
+				exports.FlattenIterator = FlattenIterator;
+
 				function isIterable(obj) {
 					return obj && obj[iterSymbol] !== undefined;
 				}
 
-				var itercomplete = {
-					next: function next() {
-						return DONE;
-					}
-				};
+				function isIterator(obj) {
+					return obj && typeof obj.next === 'function';
+				}
 
-				exports.itercomplete = itercomplete;
+				var iterdone = (_iterdone = {}, _iterdone.next = function next() {
+					return DONE;
+				}, _iterdone[iterSymbol] = function () {
+					return this;
+				}, _iterdone);
+
+				exports.iterdone = iterdone;
 				var protocols = {
 					iterator: iterSymbol,
 					transducer: {
@@ -18704,7 +18012,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 				// Internal transduce (don't need to check the arity)
 				function _transduce(t, xf, init, coll) {
-					return reduce(t(xf), init, coll);
+					return _reduce(t(xf), init, coll);
 				}
 				function into(init, t, coll) {
 					var xf = transformer(init);
@@ -18869,19 +18177,21 @@ return /******/ (function(modules) { // webpackBootstrap
 					return iterable(value)[iterSymbol]();
 				}
 
-				function iterable(value) {
-					if (value[iterSymbol] !== void 0) {
-						return value;
-					} else if (isArray(value) || typeof value === 'string') {
-						return arrayIterable(value);
-					} else if (typeof value === 'function') {
-						return functionIterable(value);
-					} else if (typeof value.next === 'function') {
+				function iterable(val) {
+					if (val[iterSymbol] !== void 0) {
+						return val;
+					} else if (isArray(val) || typeof val === 'string') {
+						return arrayIterable(val);
+					} else if (typeof val === 'function') {
 						return functionIterable(function () {
-							return value.next();
+							return { done: false, value: val() };
+						});
+					} else if (typeof val.next === 'function') {
+						return functionIterable(function () {
+							return val.next();
 						});
 					} else {
-						return objectIterable(value);
+						return objectIterable(val);
 					}
 				}
 
@@ -18889,47 +18199,53 @@ return /******/ (function(modules) { // webpackBootstrap
 					var _ref;
 
 					return (_ref = {}, _ref[iterSymbol] = function () {
+						var _ref2;
+
 						var idx = 0;
-						return {
-							next: function next() {
-								if (idx >= arr.length) {
-									return DONE;
-								}
-								return { done: false, value: arr[idx++] };
+						return (_ref2 = {}, _ref2.next = function next() {
+							if (idx >= arr.length) {
+								return DONE;
 							}
-						};
+							return { done: false, val: arr[idx++] };
+						}, _ref2[iterSymbol] = function () {
+							return this;
+						}, _ref2);
 					}, _ref);
 				}
 
 				// Wrap an function into an iterable that calls function on every next
 				function functionIterable(fn) {
-					var _ref2;
+					var _ref3;
 
-					return (_ref2 = {}, _ref2[iterSymbol] = function () {
-						return {
-							next: function next() {
-								return { done: false, value: fn() };
-							}
-						};
-					}, _ref2);
+					return (_ref3 = {}, _ref3[iterSymbol] = function () {
+						var _ref4;
+
+						return (_ref4 = {}, _ref4.next = function next() {
+							return fn();
+						}, _ref4[iterSymbol] = function () {
+							return this;
+						}, _ref4);
+					}, _ref3);
 				}
 
 				// Wrap an Object into an iterable. iterates [key, val]
 				function objectIterable(obj) {
-					var _ref3;
+					var _ref5;
 
-					return (_ref3 = {}, _ref3[iterSymbol] = function () {
+					return (_ref5 = {}, _ref5[iterSymbol] = function () {
+						var _ref6;
+
 						var idx = 0;
 						var keys = Object.keys(obj);
-						return {
-							next: function next() {
-								if (idx >= keys.length) {
-									return DONE;
-								}var key = keys[idx++];
-								return { done: false, value: [key, obj[key]] };
-							}
-						};
-					}, _ref3);
+						return (_ref6 = {}, _ref6.next = function next() {
+							if (idx >= keys.length) {
+								return DONE;
+							}var key = keys[idx++];
+							return { done: false, value: [key, obj[key]] };
+						}, _ref6[iterSymbol] = function () {
+							return this;
+						}, _ref6);
+					}, _ref5);
 				}
 				function transducer(step, result, init) {
 					return function (xf) {
@@ -18937,53 +18253,43 @@ return /******/ (function(modules) { // webpackBootstrap
 					};
 				}
 
-				var Transducer = (function () {
-					function Transducer(xf, step, result, init) {
-						_classCallCheck(this, Transducer);
+				function transducer(step, result, init) {
+					return function (xf) {
+						return new FnTransducer(xf, step, result, init);
+					};
+				}
 
-						this.xf = xf;
-						this.__init = init;
-						this.__step = step;
-						this.__result = result;
+				var FnTransducer = (function (_Transducer) {
+					function FnTransducer(xf, step, result, init) {
+						_classCallCheck(this, FnTransducer);
+
+						_Transducer.call(this, xf);
+
+						this._init = init;
+						this._step = step;
+						this._result = result;
+
+						this.xfInit = this.xfInit.bind(this);
+						this.xfStep = this.xfStep.bind(this);
+						this.xfResult = this.xfResult.bind(this);
 					}
 
-					Transducer.prototype[tInit] = function () {
-						var _this = this;
+					_inherits(FnTransducer, _Transducer);
 
-						if (this.__init) {
-							return this.__init(function () {
-								return _this.xf[tInit]();
-							});
-						}
-						return this.xf[tInit]();
+					FnTransducer.prototype[tInit] = function () {
+						return this._init ? this._init(this.xfInit) : this.xfInit();
 					};
 
-					Transducer.prototype[tStep] = function (value, input) {
-						var _this2 = this;
-
-						if (this.__step) {
-							return this.__step(function (result, val) {
-								return _this2.xf[tStep](result, val);
-							}, value, input);
-						}
-						return this.xf[tStep](value, input);
+					FnTransducer.prototype[tStep] = function (value, input) {
+						return this._step ? this._step(this.xfStep, value, input) : this.xfStep(value, input);
 					};
 
-					Transducer.prototype[tResult] = function (value) {
-						var _this3 = this;
-
-						if (this.__result) {
-							return this.__result(function (v) {
-								return _this3.xf[tResult](v);
-							}, value, function (result, value) {
-								return _this3.xf[tStep](result, value);
-							});
-						}
-						return this.xf[tResult](value);
+					FnTransducer.prototype[tResult] = function (value) {
+						return this._result ? this._result(this.xfResult, value, this.xfStep) : this.xfResult(value);
 					};
 
-					return Transducer;
-				})();
+					return FnTransducer;
+				})(Transducer);
 
 				function reduced(value, force) {
 					if (force || !isReduced(value)) {
@@ -19009,7 +18315,7 @@ return /******/ (function(modules) { // webpackBootstrap
 					}
 
 					Eduction.prototype[iterSymbol] = function () {
-						return seq(this.t, this.coll);
+						return lazySeq(this.t, this.coll);
 					};
 
 					Eduction.prototype.reduce = function reduce(rf, init) {
@@ -19019,12 +18325,8 @@ return /******/ (function(modules) { // webpackBootstrap
 					return Eduction;
 				})();
 
-				function seqable(t, coll) {
-					return new LazyIterable(t, coll);
-				}
-
-				function seq(t, coll) {
-					return iterator(seqable(t, coll));
+				function lazySeq(t, coll) {
+					return iterator(new LazyIterable(t, coll));
 				}
 
 				var LazyIterable = (function () {
@@ -19042,29 +18344,27 @@ return /******/ (function(modules) { // webpackBootstrap
 					return LazyIterable;
 				})();
 
+				var lazyTransformer = (_lazyTransformer = {}, _lazyTransformer[tStep] = function (result, val) {
+					result.values.push();
+				}, _lazyTransformer);
+
 				var LazyIterator = (function () {
 					function LazyIterator(stepper) {
 						_classCallCheck(this, LazyIterator);
 
 						this.stepper = stepper;
 						this.values = [];
-						this.pending = [];
 					}
 
 					LazyIterator.prototype.next = function next() {
 						if (this.stepper && this.values.length === 0) {
 							this.stepper[tStep](this);
 						}
-						return this.values.length ? { done: false, value: this.values.pop() } : DONE;
+						return this.values.length ? { done: false, value: this.values.shift() } : DONE;
 					};
 
-					LazyIterator.prototype[tStep] = function (result, value) {
-						this.pending.push(value);
-						return result;
-					};
-
-					LazyIterator.prototype[tResult] = function (result) {
-						return result;
+					LazyIterator.prototype[iterSymbol] = function () {
+						return this;
 					};
 
 					return LazyIterator;
@@ -19086,16 +18386,19 @@ return /******/ (function(modules) { // webpackBootstrap
 						this.iterable = iterable;
 					}
 
-					Stepper.prototype[tStep] = function (lazyIterator, value) {
-						var values = lazyIterator.values;
-						var prevLen = values.length;
-						while (prevLen === values.length) {
-							var next = this.iterable.next();
-							if (next.done) {
+					Stepper.prototype[tStep] = function (lazyIterator) {
+						var prevLen = lazyIterator.values.length;
+						while (prevLen === lazyIterator.values.length) {
+							var _iterable$next = this.iterable.next();
+
+							var value = _iterable$next.value;
+							var done = _iterable$next.done;
+
+							if (done) {
 								this.xf[tResult](lazyIterator);
 								break;
 							}
-							var result = this.xf[tStep](lazyIterator, next.value);
+							var result = this.xf[tStep](lazyIterator, value);
 							if (isReduced(result)) {
 								this.xf[tResult](lazyIterator);
 								break;
@@ -19113,213 +18416,441 @@ return /******/ (function(modules) { // webpackBootstrap
 
 				'use strict';
 
+				var _classCallCheck = function _classCallCheck(instance, Constructor) {
+					if (!(instance instanceof Constructor)) {
+						throw new TypeError('Cannot call a class as a function');
+					}
+				};
+
+				var _inherits = function _inherits(subClass, superClass) {
+					if (typeof superClass !== 'function' && superClass !== null) {
+						throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
+					}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) subClass.__proto__ = superClass;
+				};
+
 				exports.__esModule = true;
-				exports.cat = cat;
-				exports.dedupe = dedupe;
-				exports.drop = drop;
-				exports.dropWhile = dropWhile;
-				exports.filter = filter;
+
+				var _Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols = __webpack_require__(3);
+
+				var _protocols$transducer = _Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.protocols.transducer;
+				var tStep = _protocols$transducer.step;
+				var tResult = _protocols$transducer.result;
+				var map = function map(f) {
+					return function (xf) {
+						return new Map(f, xf);
+					};
+				};
 				exports.map = map;
-				exports.mapcat = mapcat;
-				exports.partitionAll = partitionAll;
-				exports.partitionBy = partitionBy;
-				exports.remove = remove;
-				exports.take = take;
-				exports.takeWhile = takeWhile;
-				exports.tap = tap;
-				exports.unique = unique;
 
-				// Returns a new collection containing elements of the given
-				// collection, separated by the specified separator.
-				exports.interpose = interpose;
+				var Map = (function (_Transducer) {
+					function Map(f, xf) {
+						_classCallCheck(this, Map);
 
-				var _compose$reduced$isReduced$reduce$transducer$identity = __webpack_require__(3);
+						_Transducer.call(this, xf);
+						this.f = f;
+					}
 
-				var transducerReduce = _compose$reduced$isReduced$reduce$transducer$identity.transducer(_compose$reduced$isReduced$reduce$transducer$identity.reduce);
-				var preserveReduced = _compose$reduced$isReduced$reduce$transducer$identity.transducer(function (step, value, input) {
-					value = step(value, input);
-					return _compose$reduced$isReduced$reduce$transducer$identity.isReduced(value) ? _compose$reduced$isReduced$reduce$transducer$identity.reduced(value, true) : value;
-				});
+					_inherits(Map, _Transducer);
 
-				function cat(xf) {
-					return transducerReduce(preserveReduced(xf));
-				}
-
-				function dedupe() {
-					return function (xf) {
-						var sawFirst;
-						var last;
-						return _compose$reduced$isReduced$reduce$transducer$identity.transducer(function (step, value, input) {
-							if (!sawFirst || last !== input) {
-								value = step(value, input);
-							}
-							last = input;
-							sawFirst = true;
-							return value;
-						})(xf);
+					Map.prototype[tStep] = function (value, input) {
+						return this.xfStep(value, this.f(input));
 					};
-				}
 
-				function drop(n) {
+					return Map;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
+
+				var filter = function filter(p) {
 					return function (xf) {
-						var dropN = n;
-						return _compose$reduced$isReduced$reduce$transducer$identity.transducer(function (step, value, item) {
-							return --dropN < 0 ? step(value, item) : value;
-						})(xf);
+						return new Filter(p, xf);
 					};
-				}
+				};
+				exports.filter = filter;
 
-				function dropWhile(p) {
-					return function (xf) {
-						var found;
-						return _compose$reduced$isReduced$reduce$transducer$identity.transducer(function (step, value, input) {
-							if (!found) {
-								if (p(input)) {
-									return value;
-								}
-								found = true;
-							}
-							return step(value, input);
-						})(xf);
+				var Filter = (function (_Transducer2) {
+					function Filter(p, xf) {
+						_classCallCheck(this, Filter);
+
+						_Transducer2.call(this, xf);
+						this.p = p;
+					}
+
+					_inherits(Filter, _Transducer2);
+
+					Filter.prototype[tStep] = function (value, input) {
+						return this.p(input) ? this.xfStep(value, input) : value;
 					};
-				}
 
-				function filter(predicate) {
-					return _compose$reduced$isReduced$reduce$transducer$identity.transducer(function (step, value, input) {
-						return predicate(input) ? step(value, input) : value;
-					});
-				}
+					return Filter;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
 
-				function map(callback) {
-					return _compose$reduced$isReduced$reduce$transducer$identity.transducer(function (step, value, input) {
-						return step(value, callback(input));
-					});
-				}
-
-				function mapcat(callback) {
-					return _compose$reduced$isReduced$reduce$transducer$identity.compose(map(callback), cat);
-				}
-
-				function partitionAll(n) {
-					return function (xf) {
-						var inputs = [];
-						return _compose$reduced$isReduced$reduce$transducer$identity.transducer(function (step, value, input) {
-							var ins = inputs;
-							ins.push(input);
-							if (n === ins.length) {
-								inputs = [];
-								value = step(value, ins);
-							}
-							return value;
-						}, function (result, value, step) {
-							var ins = inputs;
-							if (ins && ins.length) {
-								inputs = [];
-								value = step(value, ins);
-							}
-							return result(value);
-						})(xf);
-					};
-				}
-
-				function partitionBy(f) {
-					return function (xf) {
-						var inputs, prev;
-						return _compose$reduced$isReduced$reduce$transducer$identity.transducer(function (step, value, input) {
-							var ins = inputs;
-							var curr = f(input);
-							var _prev = prev;
-							prev = curr;
-							if (ins === undefined) {
-								inputs = [input];
-							} else if (_prev === curr) {
-								ins.push(input);
-							} else {
-								inputs = [];
-								value = step(value, ins);
-								if (!_compose$reduced$isReduced$reduce$transducer$identity.isReduced(value)) {
-									inputs.push(input);
-								}
-							}
-							return value;
-						}, function (result, value, step) {
-							var ins = inputs;
-							if (ins && ins.length) {
-								inputs = [];
-								value = step(value, ins);
-							}
-							return result(value);
-						})(xf);
-					};
-				}
-
-				function remove(p) {
+				var remove = function remove(p) {
 					return filter(function (x) {
 						return !p(x);
 					});
-				}
+				};
 
-				function take(n) {
+				exports.remove = remove;
+				var take = function take(n) {
 					return function (xf) {
-						var _n = n;
-						return _compose$reduced$isReduced$reduce$transducer$identity.transducer(function (step, value, item) {
-							if (_n-- > 0) {
-								value = step(value, item);
-							}
-							if (_n <= 0) {
-								value = _compose$reduced$isReduced$reduce$transducer$identity.reduced(value);
-							}
-							return value;
-						})(xf);
+						return new Take(n, xf);
 					};
-				}
+				};
+				exports.take = take;
 
-				function takeWhile(p) {
-					return _compose$reduced$isReduced$reduce$transducer$identity.transducer(function (step, value, input) {
-						return p(input) ? step(value, input) : _compose$reduced$isReduced$reduce$transducer$identity.reduced(value);
-					});
-				}
+				var Take = (function (_Transducer3) {
+					function Take(n, xf) {
+						_classCallCheck(this, Take);
 
-				function tap(interceptor) {
-					return _compose$reduced$isReduced$reduce$transducer$identity.transducer(function (step, value, input) {
-						interceptor(value, input);
-						return step(value, input);
-					});
-				}
+						_Transducer3.call(this, xf);
+						this.n = n;
+					}
 
-				function unique(f) {
-					f = f || _compose$reduced$isReduced$reduce$transducer$identity.identity;
-					return function (xf) {
-						var seen = [];
-						return _compose$reduced$isReduced$reduce$transducer$identity.transducer(function (step, value, input) {
-							var computed = f(input);
-							if (seen.indexOf(computed) < 0) {
-								seen.push(computed);
-								value = step(value, input);
-							}
-							return value;
-						})(xf);
+					_inherits(Take, _Transducer3);
+
+					Take.prototype[tStep] = function (value, input) {
+						if (this.n-- > 0) {
+							value = this.xfStep(value, input);
+						}
+						if (this.n <= 0) {
+							value = _Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.reduced(value);
+						}
+						return value;
 					};
-				}
 
-				function interpose(separator) {
+					return Take;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
+
+				var takeWhile = function takeWhile(p) {
 					return function (xf) {
-						var started;
-						return _compose$reduced$isReduced$reduce$transducer$identity.transducer(function (step, result, val) {
-							if (started) {
-								var withSep = step(result, separator);
-								if (_compose$reduced$isReduced$reduce$transducer$identity.isReduced(withSep)) {
-									return withSep;
-								} else {
-									return step(withSep, val);
-								}
+						return new TakeWhile(p, xf);
+					};
+				};
+				exports.takeWhile = takeWhile;
+
+				var TakeWhile = (function (_Transducer4) {
+					function TakeWhile(p, xf) {
+						_classCallCheck(this, TakeWhile);
+
+						_Transducer4.call(this, xf);
+						this.p = p;
+					}
+
+					_inherits(TakeWhile, _Transducer4);
+
+					TakeWhile.prototype[tStep] = function (value, input) {
+						return this.p(input) ? this.xfStep(value, input) : _Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.reduced(value);
+					};
+
+					return TakeWhile;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
+
+				var drop = function drop(n) {
+					return function (xf) {
+						return new Drop(n, xf);
+					};
+				};
+				exports.drop = drop;
+
+				var Drop = (function (_Transducer5) {
+					function Drop(n, xf) {
+						_classCallCheck(this, Drop);
+
+						_Transducer5.call(this, xf);
+						this.n = n;
+					}
+
+					_inherits(Drop, _Transducer5);
+
+					Drop.prototype[tStep] = function (value, input) {
+						return --this.n < 0 ? this.xfStep(value, input) : value;
+					};
+
+					return Drop;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
+
+				var dropWhile = function dropWhile(p) {
+					return function (xf) {
+						return new DropWhile(p, xf);
+					};
+				};
+				exports.dropWhile = dropWhile;
+
+				var DropWhile = (function (_Transducer6) {
+					function DropWhile(p, xf) {
+						_classCallCheck(this, DropWhile);
+
+						_Transducer6.call(this, xf);
+						this.p = p;
+						this.found = false;
+					}
+
+					_inherits(DropWhile, _Transducer6);
+
+					DropWhile.prototype[tStep] = function (value, input) {
+						if (!this.found) {
+							if (this.p(input)) {
+								return value;
+							}
+							this.found = true;
+						}
+						return this.xfStep(value, input);
+					};
+
+					return DropWhile;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
+
+				var cat = function cat(xf) {
+					return new Cat(xf);
+				};
+				exports.cat = cat;
+
+				var Cat = (function (_Transducer7) {
+					function Cat(xf) {
+						_classCallCheck(this, Cat);
+
+						_Transducer7.call(this, new PreserveReduced(xf));
+					}
+
+					_inherits(Cat, _Transducer7);
+
+					Cat.prototype[tStep] = function (value, input) {
+						return _Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.reduce(this.xf, value, input);
+					};
+
+					return Cat;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
+
+				var PreserveReduced = (function (_Transducer8) {
+					function PreserveReduced(xf) {
+						_classCallCheck(this, PreserveReduced);
+
+						_Transducer8.call(this, xf);
+					}
+
+					_inherits(PreserveReduced, _Transducer8);
+
+					PreserveReduced.prototype[tStep] = function (value, input) {
+						value = this.xfStep(value, input);
+						if (_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.isReduced(value)) {
+							value = _Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.reduced(value, true);
+						}
+						return value;
+					};
+
+					return PreserveReduced;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
+
+				var mapcat = function mapcat(f) {
+					return _Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.compose(map(f), cat);
+				};
+
+				exports.mapcat = mapcat;
+				var partitionAll = function partitionAll(n) {
+					return function (xf) {
+						return new PartitionAll(n, xf);
+					};
+				};
+				exports.partitionAll = partitionAll;
+
+				var PartitionAll = (function (_Transducer9) {
+					function PartitionAll(n, xf) {
+						_classCallCheck(this, PartitionAll);
+
+						_Transducer9.call(this, xf);
+						this.n = n;
+						this.inputs = [];
+					}
+
+					_inherits(PartitionAll, _Transducer9);
+
+					PartitionAll.prototype[tStep] = function (value, input) {
+						var ins = this.inputs;
+						ins.push(input);
+						if (this.n === ins.length) {
+							this.inputs = [];
+							value = this.xfStep(value, ins);
+						}
+						return value;
+					};
+
+					PartitionAll.prototype[tResult] = function (value) {
+						var ins = this.inputs;
+						if (ins && ins.length) {
+							this.inputs = [];
+							value = this.xfStep(value, ins);
+						}
+						return this.xfResult(value);
+					};
+
+					return PartitionAll;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
+
+				var partitionBy = function partitionBy(f) {
+					return function (xf) {
+						return new PartitionBy(f, xf);
+					};
+				};
+				exports.partitionBy = partitionBy;
+
+				var PartitionBy = (function (_Transducer10) {
+					function PartitionBy(f, xf) {
+						_classCallCheck(this, PartitionBy);
+
+						_Transducer10.call(this, xf);
+						this.f = f;
+					}
+
+					_inherits(PartitionBy, _Transducer10);
+
+					PartitionBy.prototype[tStep] = function (value, input) {
+						var ins = this.inputs;
+						var curr = this.f(input);
+						var prev = this.prev;
+						this.prev = curr;
+						if (ins === void 0) {
+							this.inputs = [input];
+						} else if (prev === curr) {
+							ins.push(input);
+						} else {
+							this.inputs = [];
+							value = this.xfStep(value, ins);
+							if (!_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.isReduced(value)) {
+								this.inputs.push(input);
+							}
+						}
+						return value;
+					};
+
+					PartitionBy.prototype[tResult] = function (value) {
+						var ins = this.inputs;
+						if (ins && ins.length) {
+							this.inputs = [];
+							value = this.xfStep(value, ins);
+						}
+						return this.xfResult(value);
+					};
+
+					return PartitionBy;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
+
+				var dedupe = function dedupe() {
+					return function (xf) {
+						return new Dedupe(xf);
+					};
+				};
+				exports.dedupe = dedupe;
+
+				var Dedupe = (function (_Transducer11) {
+					function Dedupe(xf) {
+						_classCallCheck(this, Dedupe);
+
+						_Transducer11.call(this, xf);
+						this.sawFirst = false;
+					}
+
+					_inherits(Dedupe, _Transducer11);
+
+					Dedupe.prototype[tStep] = function (value, input) {
+						if (!this.sawFirst || this.last !== input) {
+							value = this.xfStep(value, input);
+						}
+						this.last = input;
+						this.sawFirst = true;
+						return value;
+					};
+
+					return Dedupe;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
+
+				var unique = function unique(f) {
+					return function (xf) {
+						return new Unique(f, xf);
+					};
+				};
+				exports.unique = unique;
+
+				var Unique = (function (_Transducer12) {
+					function Unique(f, xf) {
+						_classCallCheck(this, Unique);
+
+						_Transducer12.call(this, xf);
+						this.seen = [];
+						this.f = f || _Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.identity;
+					}
+
+					_inherits(Unique, _Transducer12);
+
+					Unique.prototype[tStep] = function (value, input) {
+						var computed = this.f(input);
+						if (this.seen.indexOf(computed) < 0) {
+							this.seen.push(computed);
+							value = this.xfStep(value, input);
+						}
+						return value;
+					};
+
+					return Unique;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
+
+				var tap = function tap(f) {
+					return function (xf) {
+						return new Tap(f, xf);
+					};
+				};
+				exports.tap = tap;
+
+				var Tap = (function (_Transducer13) {
+					function Tap(f, xf) {
+						_classCallCheck(this, Tap);
+
+						_Transducer13.call(this, xf);
+						this.f = f;
+					}
+
+					_inherits(Tap, _Transducer13);
+
+					Tap.prototype[tStep] = function (value, input) {
+						this.f(value, input);
+						return this.xfStep(value, input);
+					};
+
+					return Tap;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
+
+				var interpose = function interpose(separator) {
+					return function (xf) {
+						return new Interpose(separator, xf);
+					};
+				};
+				exports.interpose = interpose;
+
+				var Interpose = (function (_Transducer14) {
+					function Interpose(separator, xf) {
+						_classCallCheck(this, Interpose);
+
+						_Transducer14.call(this, xf);
+						this.separator = separator;
+						this.started = false;
+					}
+
+					_inherits(Interpose, _Transducer14);
+
+					Interpose.prototype[tStep] = function (result, value) {
+						if (this.started) {
+							var withSep = this.xf[tStep](result, this.separator);
+							if (_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.isReduced(withSep)) {
+								return withSep;
 							} else {
-								started = true;
-								return step(result, val);
+								return this.xfStep(withSep, value);
 							}
-						})(xf);
+						} else {
+							this.started = true;
+							return this.xfStep(result, value);
+						}
 					};
-				}
+
+					return Interpose;
+				})(_Transducer$compose$reduced$isReduced$reduce$transducer$identity$protocols.Transducer);
 
 				/***/
 			}
@@ -19331,56 +18862,315 @@ return /******/ (function(modules) { // webpackBootstrap
 	/******/
 
 /***/ },
+/* 99 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Converts `value` to a string if it is not one. An empty string is returned
+	 * for `null` or `undefined` values.
+	 *
+	 * @private
+	 * @param {*} value The value to process.
+	 * @returns {string} Returns the string.
+	 */
+	function baseToString(value) {
+	  if (typeof value == 'string') {
+	    return value;
+	  }
+	  return value == null ? '' : (value + '');
+	}
+
+	module.exports = baseToString;
+
+
+/***/ },
+/* 100 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Initializes an array clone.
+	 *
+	 * @private
+	 * @param {Array} array The array to clone.
+	 * @returns {Array} Returns the initialized clone.
+	 */
+	function initCloneArray(array) {
+	  var length = array.length,
+	      result = new array.constructor(length);
+
+	  // Add array properties assigned by `RegExp#exec`.
+	  if (length && typeof array[0] == 'string' && hasOwnProperty.call(array, 'index')) {
+	    result.index = array.index;
+	    result.input = array.input;
+	  }
+	  return result;
+	}
+
+	module.exports = initCloneArray;
+
+
+/***/ },
+/* 101 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var bufferClone = __webpack_require__(106);
+
+	/** `Object#toString` result references. */
+	var boolTag = '[object Boolean]',
+	    dateTag = '[object Date]',
+	    numberTag = '[object Number]',
+	    regexpTag = '[object RegExp]',
+	    stringTag = '[object String]';
+
+	var arrayBufferTag = '[object ArrayBuffer]',
+	    float32Tag = '[object Float32Array]',
+	    float64Tag = '[object Float64Array]',
+	    int8Tag = '[object Int8Array]',
+	    int16Tag = '[object Int16Array]',
+	    int32Tag = '[object Int32Array]',
+	    uint8Tag = '[object Uint8Array]',
+	    uint8ClampedTag = '[object Uint8ClampedArray]',
+	    uint16Tag = '[object Uint16Array]',
+	    uint32Tag = '[object Uint32Array]';
+
+	/** Used to match `RegExp` flags from their coerced string values. */
+	var reFlags = /\w*$/;
+
+	/**
+	 * Initializes an object clone based on its `toStringTag`.
+	 *
+	 * **Note:** This function only supports cloning values with tags of
+	 * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+	 *
+	 *
+	 * @private
+	 * @param {Object} object The object to clone.
+	 * @param {string} tag The `toStringTag` of the object to clone.
+	 * @param {boolean} [isDeep] Specify a deep clone.
+	 * @returns {Object} Returns the initialized clone.
+	 */
+	function initCloneByTag(object, tag, isDeep) {
+	  var Ctor = object.constructor;
+	  switch (tag) {
+	    case arrayBufferTag:
+	      return bufferClone(object);
+
+	    case boolTag:
+	    case dateTag:
+	      return new Ctor(+object);
+
+	    case float32Tag: case float64Tag:
+	    case int8Tag: case int16Tag: case int32Tag:
+	    case uint8Tag: case uint8ClampedTag: case uint16Tag: case uint32Tag:
+	      var buffer = object.buffer;
+	      return new Ctor(isDeep ? bufferClone(buffer) : buffer, object.byteOffset, object.length);
+
+	    case numberTag:
+	    case stringTag:
+	      return new Ctor(object);
+
+	    case regexpTag:
+	      var result = new Ctor(object.source, reFlags.exec(object));
+	      result.lastIndex = object.lastIndex;
+	  }
+	  return result;
+	}
+
+	module.exports = initCloneByTag;
+
+
+/***/ },
+/* 102 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Initializes an object clone.
+	 *
+	 * @private
+	 * @param {Object} object The object to clone.
+	 * @returns {Object} Returns the initialized clone.
+	 */
+	function initCloneObject(object) {
+	  var Ctor = object.constructor;
+	  if (!(typeof Ctor == 'function' && Ctor instanceof Ctor)) {
+	    Ctor = Object;
+	  }
+	  return new Ctor;
+	}
+
+	module.exports = initCloneObject;
+
+
+/***/ },
+/* 103 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var equalArrays = __webpack_require__(107),
+	    equalByTag = __webpack_require__(108),
+	    equalObjects = __webpack_require__(109),
+	    isArray = __webpack_require__(26),
+	    isTypedArray = __webpack_require__(70);
+
+	/** `Object#toString` result references. */
+	var argsTag = '[object Arguments]',
+	    arrayTag = '[object Array]',
+	    objectTag = '[object Object]';
+
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Used to resolve the `toStringTag` of values.
+	 * See the [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+	 * for more details.
+	 */
+	var objToString = objectProto.toString;
+
+	/**
+	 * A specialized version of `baseIsEqual` for arrays and objects which performs
+	 * deep comparisons and tracks traversed objects enabling objects with circular
+	 * references to be compared.
+	 *
+	 * @private
+	 * @param {Object} object The object to compare.
+	 * @param {Object} other The other object to compare.
+	 * @param {Function} equalFunc The function to determine equivalents of values.
+	 * @param {Function} [customizer] The function to customize comparing objects.
+	 * @param {boolean} [isWhere] Specify performing partial comparisons.
+	 * @param {Array} [stackA=[]] Tracks traversed `value` objects.
+	 * @param {Array} [stackB=[]] Tracks traversed `other` objects.
+	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+	 */
+	function baseIsEqualDeep(object, other, equalFunc, customizer, isWhere, stackA, stackB) {
+	  var objIsArr = isArray(object),
+	      othIsArr = isArray(other),
+	      objTag = arrayTag,
+	      othTag = arrayTag;
+
+	  if (!objIsArr) {
+	    objTag = objToString.call(object);
+	    if (objTag == argsTag) {
+	      objTag = objectTag;
+	    } else if (objTag != objectTag) {
+	      objIsArr = isTypedArray(object);
+	    }
+	  }
+	  if (!othIsArr) {
+	    othTag = objToString.call(other);
+	    if (othTag == argsTag) {
+	      othTag = objectTag;
+	    } else if (othTag != objectTag) {
+	      othIsArr = isTypedArray(other);
+	    }
+	  }
+	  var objIsObj = objTag == objectTag,
+	      othIsObj = othTag == objectTag,
+	      isSameTag = objTag == othTag;
+
+	  if (isSameTag && !(objIsArr || objIsObj)) {
+	    return equalByTag(object, other, objTag);
+	  }
+	  var valWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
+	      othWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
+
+	  if (valWrapped || othWrapped) {
+	    return equalFunc(valWrapped ? object.value() : object, othWrapped ? other.value() : other, customizer, isWhere, stackA, stackB);
+	  }
+	  if (!isSameTag) {
+	    return false;
+	  }
+	  // Assume cyclic values are equal.
+	  // For more information on detecting circular references see https://es5.github.io/#JO.
+	  stackA || (stackA = []);
+	  stackB || (stackB = []);
+
+	  var length = stackA.length;
+	  while (length--) {
+	    if (stackA[length] == object) {
+	      return stackB[length] == other;
+	    }
+	  }
+	  // Add `object` and `other` to the stack of traversed objects.
+	  stackA.push(object);
+	  stackB.push(other);
+
+	  var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, isWhere, stackA, stackB);
+
+	  stackA.pop();
+	  stackB.pop();
+
+	  return result;
+	}
+
+	module.exports = baseIsEqualDeep;
+
+
+/***/ },
+/* 104 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseFor = __webpack_require__(87),
+	    keysIn = __webpack_require__(97);
+
+	/**
+	 * The base implementation of `_.forIn` without support for callback
+	 * shorthands and `this` binding.
+	 *
+	 * @private
+	 * @param {Object} object The object to iterate over.
+	 * @param {Function} iteratee The function invoked per iteration.
+	 * @returns {Object} Returns `object`.
+	 */
+	function baseForIn(object, iteratee) {
+	  return baseFor(object, iteratee, keysIn);
+	}
+
+	module.exports = baseForIn;
+
+
+/***/ },
 /* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	/**
+	 * The base implementation of `_.values` and `_.valuesIn` which creates an
+	 * array of `object` property values corresponding to the property names
+	 * returned by `keysFunc`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {Array} props The property names to get values for.
+	 * @returns {Object} Returns the array of property values.
+	 */
+	function baseValues(object, props) {
+	  var index = -1,
+	      length = props.length,
+	      result = Array(length);
 
-	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
-
-	exports.dropFirstClause = dropFirstClause;
-	exports.__esModule = true;
-
-	var _transduce = __webpack_require__(40);
-
-	var transducer = _transduce.transducer;
-	var drop = _transduce.drop;
-	var seq = _transduce.seq;
-
-	var DropFirst = (function () {
-	  function DropFirst(val) {
-	    _classCallCheck(this, DropFirst);
-
-	    this.val = val;
-	    this.type = val.type;
+	  while (++index < length) {
+	    result[index] = object[props[index]];
 	  }
-
-	  DropFirst.prototype.compile = function compile() {
-	    return sequence(drop(1), this.val.compile());
-	  };
-
-	  return DropFirst;
-	})();
-
-	function dropFirstClause(Ctor, prefix, values) {
-	  var seen;
-	  return seq(transducer(function (step, value, input) {
-	    if (input && !seen) {
-	      seen = true;
-	      return step(value, [prefix, new DropFirst(new Ctor(input))]);
-	    } else if (input) {
-	      return step(value, new Ctor(input));
-	    }
-	    return value;
-	  }), values);
+	  return result;
 	}
+
+	module.exports = baseValues;
+
 
 /***/ },
 /* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var constant = __webpack_require__(110),
-	    isNative = __webpack_require__(46);
+	    isNative = __webpack_require__(45);
 
 	/** Native method references. */
 	var ArrayBuffer = isNative(ArrayBuffer = global.ArrayBuffer) && ArrayBuffer,
@@ -19556,7 +19346,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var keys = __webpack_require__(38);
+	var keys = __webpack_require__(41);
 
 	/** Used for native method references. */
 	var objectProto = Object.prototype;
@@ -19659,6 +19449,945 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	module.exports = constant;
+
+
+/***/ },
+/* 111 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	exports.__esModule = true;
+
+	var SELECT = __webpack_require__(27).SELECT;
+
+	var _transduce = __webpack_require__(23);
+
+	var iterator = _transduce.iterator;
+	var iterSymbol = _transduce.iterSymbol;
+
+	var _clauses = __webpack_require__(114);
+
+	var ColumnIterable = _clauses.ColumnIterable;
+	var FromIterable = _clauses.FromIterable;
+	var WhereIterable = _clauses.WhereIterable;
+	var JoinIterable = _clauses.JoinIterable;
+	var GroupingIterable = _clauses.GroupingIterable;
+	var HavingIterable = _clauses.HavingIterable;
+	var OrderingIterable = _clauses.OrderingIterable;
+	var LimitIterable = _clauses.LimitIterable;
+	var OffsetIterable = _clauses.OffsetIterable;
+
+	var QueryIterable = exports.QueryIterable = (function () {
+	  function QueryIterable(container) {
+	    _classCallCheck(this, QueryIterable);
+
+	    this.container = container;
+	    this["@@knex/hook"] = "statement:select";
+	  }
+
+	  QueryIterable.prototype[iterSymbol] = function () {
+	    var t = this.container;
+	    return iterator([SELECT, new ColumnIterable(t.get("columns")), new FromIterable(t.get("from") || this.get("table")), new WhereIterable(t.get("wheres")), new JoinIterable(t.get("joins")), new GroupingIterable(t.get("groupings")), new HavingIterable(t.get("havings")), new OrderingIterable(t.get("orderBy")), new LimitIterable(t.last("limit")), new OffsetIterable(t.last("offset"))]);
+	  };
+
+	  return QueryIterable;
+	})();
+
+	var SubQueryIterable = exports.SubQueryIterable = (function (_QueryIterable) {
+	  function SubQueryIterable() {
+	    _classCallCheck(this, SubQueryIterable);
+
+	    if (_QueryIterable != null) {
+	      _QueryIterable.apply(this, arguments);
+	    }
+	  }
+
+	  _inherits(SubQueryIterable, _QueryIterable);
+
+	  return SubQueryIterable;
+	})(QueryIterable);
+
+/***/ },
+/* 112 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	exports.__esModule = true;
+
+	var _clausesWhere = __webpack_require__(113);
+
+	exports.WhereIterable = _clausesWhere.WhereIterable;
+	exports.GroupedWhereIterable = _clausesWhere.GroupedWhereIterable;
+
+/***/ },
+/* 113 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	exports.__esModule = true;
+
+	var isArray = _interopRequire(__webpack_require__(26));
+
+	var forEach = _interopRequire(__webpack_require__(8));
+
+	var _transduce = __webpack_require__(23);
+
+	var map = _transduce.map;
+	var protocols = _transduce.protocols;
+	var Transducer = _transduce.Transducer;
+	var lazySeq = _transduce.lazySeq;
+	var iterator = _transduce.iterator;
+	var iterSymbol = _transduce.iterSymbol;
+
+	var _sqlDelimiters = __webpack_require__(74);
+
+	var LEFT_PAREN = _sqlDelimiters.LEFT_PAREN;
+	var RIGHT_PAREN = _sqlDelimiters.RIGHT_PAREN;
+
+	var _sqlKeywords = __webpack_require__(27);
+
+	var AND = _sqlKeywords.AND;
+	var OR = _sqlKeywords.OR;
+	var NOT = _sqlKeywords.NOT;
+	var WHERE = _sqlKeywords.WHERE;
+
+	var i = __webpack_require__(31).identifier;
+
+	var p = __webpack_require__(34).parameter;
+
+	var WhereHavingIterable = __webpack_require__(123).WhereHavingIterable;
+
+	var _protocols$transducer = protocols.transducer;
+	var tStep = _protocols$transducer.step;
+	var tResult = _protocols$transducer.result;
+
+	var WhereClauseIterable = exports.WhereClauseIterable = (function () {
+	  function WhereClauseIterable(where) {
+	    _classCallCheck(this, WhereClauseIterable);
+
+	    this.where = where;
+	    this["@@knex/hook"] = "clause:where";
+	  }
+
+	  // [WHERE | AND | OR] [NOT] [EXISTS | BETWEEN | IN] value
+
+	  WhereClauseIterable.prototype[iterSymbol] = function () {
+	    var _ref = this;
+
+	    var where = _ref.where;
+
+	    if (isArray(where)) {
+	      return lazySeq(map(function (val) {
+	        return new WhereClauseIterable(val);
+	      }), where);
+	    }
+	    return iterator([where.__or ? OR : AND, where.__negated ? NOT : undefined, i(where.column), where.operator, p(where.value)]);
+	  };
+
+	  return WhereClauseIterable;
+	})();
+
+	var WhereIterable = exports.WhereIterable = (function (_WhereHavingIterable) {
+	  function WhereIterable(wheres) {
+	    _classCallCheck(this, WhereIterable);
+
+	    _WhereHavingIterable.call(this, WHERE, WhereClauseIterable);
+	    this.clauses = wheres;
+	    this["@@knex/hook"] = "clause:wheres";
+	  }
+
+	  _inherits(WhereIterable, _WhereHavingIterable);
+
+	  return WhereIterable;
+	})(WhereHavingIterable);
+
+	var GroupedWhereIterable = exports.GroupedWhereIterable = (function (_WhereHavingIterable2) {
+	  function GroupedWhereIterable(wheres) {
+	    _classCallCheck(this, GroupedWhereIterable);
+
+	    _WhereHavingIterable2.call(this, undefined, WhereClauseIterable);
+	    this.clauses = wheres;
+	    this["@@knex/hook"] = "clause:groupedWheres";
+	  }
+
+	  _inherits(GroupedWhereIterable, _WhereHavingIterable2);
+
+	  GroupedWhereIterable.prototype[iterSymbol] = function () {
+	    return lazySeq(wrap, _WhereHavingIterable2.prototype[iterSymbol].call(this));
+	  };
+
+	  return GroupedWhereIterable;
+	})(WhereHavingIterable);
+
+	var Wrapping = (function (_Transducer) {
+	  function Wrapping(xf) {
+	    _classCallCheck(this, Wrapping);
+
+	    _Transducer.call(this, xf);
+	    this.buffered = [];
+	  }
+
+	  _inherits(Wrapping, _Transducer);
+
+	  Wrapping.prototype[tStep] = function (result, value) {
+	    this.buffered.push(value);
+	    return result;
+	  };
+
+	  Wrapping.prototype[tResult] = function (result) {
+	    var _this = this;
+
+	    if (this.buffered.length > 0) {
+	      result = this.xfStep(result, LEFT_PAREN);
+	      forEach(this.buffered, function (val) {
+	        result = _this.xfStep(result, val);
+	      });
+	      result = this.xfStep(result, RIGHT_PAREN);
+	    }
+	    return this.xfResult(result);
+	  };
+
+	  return Wrapping;
+	})(Transducer);
+
+	var wrap = function (xf) {
+	  return new Wrapping(xf);
+	};
+
+/***/ },
+/* 114 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	exports.__esModule = true;
+	exports.ColumnIterable = __webpack_require__(115).ColumnIterable;
+	exports.FromIterable = __webpack_require__(116).FromIterable;
+	exports.OffsetIterable = __webpack_require__(117).OffsetIterable;
+	exports.LimitIterable = __webpack_require__(118).LimitIterable;
+	exports.OrderingIterable = __webpack_require__(119).OrderingIterable;
+	exports.GroupingIterable = __webpack_require__(120).GroupingIterable;
+
+	var _having = __webpack_require__(121);
+
+	exports.HavingIterable = _having.HavingIterable;
+	exports.GroupedHavingIterable = _having.GroupedHavingIterable;
+
+	var _where = __webpack_require__(113);
+
+	exports.WhereIterable = _where.WhereIterable;
+	exports.GroupedWhereIterable = _where.GroupedWhereIterable;
+
+	var _join = __webpack_require__(122);
+
+	exports.JoinIterable = _join.JoinIterable;
+	exports.GroupedJoinIterable = _join.GroupedJoinIterable;
+
+/***/ },
+/* 115 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	exports.__esModule = true;
+
+	var isArray = __webpack_require__(4).isArray;
+
+	var COMMA = __webpack_require__(74).COMMA;
+
+	var _ALL_ = __webpack_require__(27)._ALL_;
+
+	var i = __webpack_require__(31).identifier;
+
+	var _transduce = __webpack_require__(23);
+
+	var lazySeq = _transduce.lazySeq;
+	var iterator = _transduce.iterator;
+	var compose = _transduce.compose;
+	var map = _transduce.map;
+	var filter = _transduce.filter;
+	var into = _transduce.into;
+	var transducer = _transduce.transducer;
+	var interpose = _transduce.interpose;
+	var iterSymbol = _transduce.iterSymbol;
+	var FlattenIterator = _transduce.FlattenIterator;
+
+	var pipeline = compose(map(function (value) {
+	  return i(value);
+	}), filter(function (value) {
+	  return value !== undefined;
+	}), interpose(COMMA));
+
+	var ColumnIterable = exports.ColumnIterable = (function () {
+	  function ColumnIterable() {
+	    var columns = arguments[0] === undefined ? [] : arguments[0];
+
+	    _classCallCheck(this, ColumnIterable);
+
+	    this.columns = columns;
+	    this["@@knex/hook"] = "columns";
+	  }
+
+	  ColumnIterable.prototype[iterSymbol] = function () {
+	    if (this.columns.length === 0) {
+	      return iterator([_ALL_]);
+	    }
+	    return lazySeq(pipeline, new FlattenIterator(iterator(this.columns), function () {
+	      debugger;
+	    }));
+	  };
+
+	  return ColumnIterable;
+	})();
+
+/***/ },
+/* 116 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	exports.__esModule = true;
+
+	var FROM = __webpack_require__(27).FROM;
+
+	var _transduce = __webpack_require__(23);
+
+	var iterator = _transduce.iterator;
+	var iterSymbol = _transduce.iterSymbol;
+
+	var ClauseIterable = __webpack_require__(123).ClauseIterable;
+
+	var FromIterable = exports.FromIterable = (function (_ClauseIterable) {
+	  function FromIterable(value) {
+	    _classCallCheck(this, FromIterable);
+
+	    this.idx = 0;
+	    this.value = [FROM, value];
+	    this.distinct = false;
+	    this.alias = undefined;
+	    this.complete = !!value;
+	    this["@@knex/hook"] = "clause:from";
+	  }
+
+	  _inherits(FromIterable, _ClauseIterable);
+
+	  return FromIterable;
+	})(ClauseIterable);
+
+/***/ },
+/* 117 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	exports.__esModule = true;
+
+	var OFFSET = __webpack_require__(27).OFFSET;
+
+	var OffsetIterable = exports.OffsetIterable = (function () {
+	  function OffsetIterable(value) {
+	    _classCallCheck(this, OffsetIterable);
+
+	    this.value = value;
+	    this.type = "clause:offset";
+	  }
+
+	  OffsetIterable.prototype["@@knex/compile"] = function knexCompile() {
+	    if (!this.value) {
+	      return;
+	    }return [OFFSET, this.value];
+	  };
+
+	  return OffsetIterable;
+	})();
+
+/***/ },
+/* 118 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	exports.__esModule = true;
+
+	var LIMIT = __webpack_require__(27).LIMIT;
+
+	var _transduce = __webpack_require__(23);
+
+	var iterSymbol = _transduce.iterSymbol;
+	var iterator = _transduce.iterator;
+	var iterdone = _transduce.iterdone;
+
+	var LimitIterable = exports.LimitIterable = (function () {
+	  function LimitIterable(value) {
+	    _classCallCheck(this, LimitIterable);
+
+	    this.value = value;
+	    this["@@knex/hook"] = "clause:limit";
+	  }
+
+	  LimitIterable.prototype[iterSymbol] = function () {
+	    if (!this.value) return iterdone;
+	    return iterator([LIMIT, this.value]);
+	  };
+
+	  return LimitIterable;
+	})();
+
+/***/ },
+/* 119 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	exports.__esModule = true;
+
+	var ORDER_BY = __webpack_require__(27).ORDER_BY;
+
+	var _transduce = __webpack_require__(23);
+
+	var iterSymbol = _transduce.iterSymbol;
+	var iterator = _transduce.iterator;
+	var iterdone = _transduce.iterdone;
+
+	var OrderingIterable = exports.OrderingIterable = (function () {
+	  function OrderingIterable(value) {
+	    _classCallCheck(this, OrderingIterable);
+
+	    this.value = value;
+	    this["@@knex/hook"] = "clause:order";
+	  }
+
+	  OrderingIterable.prototype[iterSymbol] = function () {
+	    if (!this.value) return iterdone;
+	    return iterator([ORDER_BY, value]);
+	  };
+
+	  return OrderingIterable;
+	})();
+
+/***/ },
+/* 120 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	exports.__esModule = true;
+
+	var GROUP_BY = __webpack_require__(27).GROUP_BY;
+
+	var _transduce = __webpack_require__(23);
+
+	var iterable = _transduce.iterable;
+	var iterSymbol = _transduce.iterSymbol;
+	var iterdone = _transduce.iterdone;
+
+	var GroupingIterable = exports.GroupingIterable = (function () {
+	  function GroupingIterable(value) {
+	    _classCallCheck(this, GroupingIterable);
+
+	    this.groupings = value;
+	    this["@@knex/hook"] = "clause:grouping";
+	  }
+
+	  GroupingIterable.prototype[iterSymbol] = function () {
+	    if (!this.groupings) return iterdone;
+	    return iterable([GROUP_BY, this.groupings]);
+	  };
+
+	  return GroupingIterable;
+	})();
+
+/***/ },
+/* 121 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	exports.__esModule = true;
+
+	var _sqlDelimiters = __webpack_require__(74);
+
+	var LEFT_PAREN = _sqlDelimiters.LEFT_PAREN;
+	var RIGHT_PAREN = _sqlDelimiters.RIGHT_PAREN;
+
+	var _transduce = __webpack_require__(23);
+
+	var iterSymbol = _transduce.iterSymbol;
+	var iterdone = _transduce.iterdone;
+
+	var HavingIterable = exports.HavingIterable = (function () {
+	  function HavingIterable() {
+	    _classCallCheck(this, HavingIterable);
+	  }
+
+	  HavingIterable.prototype[iterSymbol] = function () {
+	    return iterdone;
+	  };
+
+	  return HavingIterable;
+	})();
+
+	var GroupedHavingIterable = exports.GroupedHavingIterable = (function (_HavingIterable) {
+	  function GroupedHavingIterable() {
+	    _classCallCheck(this, GroupedHavingIterable);
+
+	    if (_HavingIterable != null) {
+	      _HavingIterable.apply(this, arguments);
+	    }
+	  }
+
+	  _inherits(GroupedHavingIterable, _HavingIterable);
+
+	  GroupedHavingIterable.prototype[iterSymbol] = function () {
+	    return [LEFT_PAREN, dropFirstClause(HavingIterable, this.havings), RIGHT_PAREN];
+	  };
+
+	  return GroupedHavingIterable;
+	})(HavingIterable);
+
+/***/ },
+/* 122 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	exports.__esModule = true;
+
+	var _transduce = __webpack_require__(23);
+
+	var iterSymbol = _transduce.iterSymbol;
+	var iterator = _transduce.iterator;
+
+	var JoinIterable = exports.JoinIterable = (function () {
+	  function JoinIterable() {
+	    _classCallCheck(this, JoinIterable);
+	  }
+
+	  JoinIterable.prototype[iterSymbol] = function () {
+	    return iterator([]);
+	  };
+
+	  return JoinIterable;
+	})();
+
+	var GroupedJoinIterable = exports.GroupedJoinIterable = (function (_JoinIterable) {
+	  function GroupedJoinIterable() {
+	    _classCallCheck(this, GroupedJoinIterable);
+
+	    if (_JoinIterable != null) {
+	      _JoinIterable.apply(this, arguments);
+	    }
+	  }
+
+	  _inherits(GroupedJoinIterable, _JoinIterable);
+
+	  return GroupedJoinIterable;
+	})(JoinIterable);
+
+/***/ },
+/* 123 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	exports.__esModule = true;
+
+	var _transduce = __webpack_require__(23);
+
+	var iterator = _transduce.iterator;
+	var lazySeq = _transduce.lazySeq;
+	var drop = _transduce.drop;
+	var iterSymbol = _transduce.iterSymbol;
+
+	var DONE = { done: true, value: undefined };
+
+	var ClauseIterable = exports.ClauseIterable = (function () {
+	  function ClauseIterable() {
+	    _classCallCheck(this, ClauseIterable);
+	  }
+
+	  ClauseIterable.prototype[iterSymbol] = function () {
+	    return new ClauseIterator(this.value);
+	  };
+
+	  return ClauseIterable;
+	})();
+
+	var ClauseIterator = (function () {
+	  function ClauseIterator(value) {
+	    _classCallCheck(this, ClauseIterator);
+
+	    this.value = value;
+	    this.idx = 0;
+	    this.complete = !value || !value.length;
+	  }
+
+	  ClauseIterator.prototype.next = function next() {
+	    if (this.complete || this.idx >= this.value.length) {
+	      return DONE;
+	    }return { done: false, value: this.value[this.idx++] };
+	  };
+
+	  return ClauseIterator;
+	})();
+
+	var WhereHavingIterable = exports.WhereHavingIterable = (function () {
+	  function WhereHavingIterable(whereOrHaving, ClauseIterable) {
+	    _classCallCheck(this, WhereHavingIterable);
+
+	    this.keyword = whereOrHaving;
+	    this.Iterable = ClauseIterable;
+	  }
+
+	  WhereHavingIterable.prototype[iterSymbol] = function () {
+	    return new DropFirst(this);
+	  };
+
+	  return WhereHavingIterable;
+	})();
+
+	var DropFirst = (function () {
+	  function DropFirst(compiler) {
+	    _classCallCheck(this, DropFirst);
+
+	    this.seen = false;
+	    this.idx = 0;
+	    this.clauses = compiler.clauses;
+	    this.keyword = compiler.keyword;
+	    this.Iterable = compiler.Iterable;
+	    this.stack = [];
+	  }
+
+	  DropFirst.prototype.next = function next() {
+	    if (this.idx >= this.clauses.length) {
+	      return DONE;
+	    }if (!this.seen) {
+	      this.seen = true;
+	      return { done: false, value: [this.keyword, lazySeq(drop(1), new this.Iterable(this.clauses[this.idx++]))] };
+	    }
+	    return { done: false, value: new this.Iterable(this.clauses[this.idx++]) };
+	  };
+
+	  return DropFirst;
+	})();
+
+/***/ },
+/* 124 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	exports.__esModule = true;
+
+	var INSERT_INTO = __webpack_require__(27).INSERT_INTO;
+
+	var _transduce = __webpack_require__(23);
+
+	var iterator = _transduce.iterator;
+	var iterSymbol = _transduce.iterSymbol;
+
+	var InsertIterable = exports.InsertIterable = (function () {
+	  function InsertIterable(elements) {
+	    _classCallCheck(this, InsertIterable);
+
+	    this.elements = elements;
+	    this["@@knex/hook"] = "expression:insert";
+	  }
+
+	  InsertIterable.prototype[iterSymbol] = function () {
+	    var table = this.elements.single.table;
+
+	    return iterator([INSERT_INTO, new TableIterable(table)]);
+	  };
+
+	  return InsertIterable;
+	})();
+
+/***/ },
+/* 125 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	exports.__esModule = true;
+
+	var DELETE_FROM = __webpack_require__(27).DELETE_FROM;
+
+	var _transduce = __webpack_require__(23);
+
+	var iterator = _transduce.iterator;
+	var iterSymbol = _transduce.iterSymbol;
+
+	var DeleteIterable = exports.DeleteIterable = (function () {
+	  function DeleteIterable(elements) {
+	    _classCallCheck(this, DeleteIterable);
+
+	    this.elements = elements;
+	    this["@@knex/type"] = "statement:delete";
+	  }
+
+	  DeleteIterable.prototype[iterSymbol] = function () {
+	    var table = this.elements.single.table;
+
+	    return iterator([DELETE_FROM, table]);
+	  };
+
+	  return DeleteIterable;
+	})();
+
+/***/ },
+/* 126 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+	var UPDATE = __webpack_require__(27).UPDATE;
+
+	var WhereIterable = __webpack_require__(113).WhereIterable;
+
+	var _transduce = __webpack_require__(23);
+
+	var iterator = _transduce.iterator;
+	var iterSymbol = _transduce.iterSymbol;
+
+	var UpdateIterable = (function () {
+	  function UpdateIterable(elements) {
+	    _classCallCheck(this, UpdateIterable);
+
+	    this.elements = elements;
+	    this["@@knex/hook"] = "statement:update";
+	  }
+
+	  UpdateIterable.prototype[iterSymbol] = function () {
+	    return iterator([UPDATE, table, new WhereIterable(wheres)]);
+	  };
+
+	  return UpdateIterable;
+	})();
+
+/***/ },
+/* 127 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var createCompounder = __webpack_require__(128);
+
+	/**
+	 * Converts `string` to camel case.
+	 * See [Wikipedia](https://en.wikipedia.org/wiki/CamelCase) for more details.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category String
+	 * @param {string} [string=''] The string to convert.
+	 * @returns {string} Returns the camel cased string.
+	 * @example
+	 *
+	 * _.camelCase('Foo Bar');
+	 * // => 'fooBar'
+	 *
+	 * _.camelCase('--foo-bar');
+	 * // => 'fooBar'
+	 *
+	 * _.camelCase('__foo_bar__');
+	 * // => 'fooBar'
+	 */
+	var camelCase = createCompounder(function(result, word, index) {
+	  word = word.toLowerCase();
+	  return result + (index ? (word.charAt(0).toUpperCase() + word.slice(1)) : word);
+	});
+
+	module.exports = camelCase;
+
+
+/***/ },
+/* 128 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var deburr = __webpack_require__(129),
+	    words = __webpack_require__(130);
+
+	/**
+	 * Creates a function that produces compound words out of the words in a
+	 * given string.
+	 *
+	 * @private
+	 * @param {Function} callback The function to combine each word.
+	 * @returns {Function} Returns the new compounder function.
+	 */
+	function createCompounder(callback) {
+	  return function(string) {
+	    var index = -1,
+	        array = words(deburr(string)),
+	        length = array.length,
+	        result = '';
+
+	    while (++index < length) {
+	      result = callback(result, array[index], index);
+	    }
+	    return result;
+	  };
+	}
+
+	module.exports = createCompounder;
+
+
+/***/ },
+/* 129 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseToString = __webpack_require__(99),
+	    deburrLetter = __webpack_require__(131);
+
+	/** Used to match latin-1 supplementary letters (excluding mathematical operators). */
+	var reLatin1 = /[\xc0-\xd6\xd8-\xde\xdf-\xf6\xf8-\xff]/g;
+
+	/**
+	 * Deburrs `string` by converting latin-1 supplementary letters to basic latin letters.
+	 * See [Wikipedia](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
+	 * for more details.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category String
+	 * @param {string} [string=''] The string to deburr.
+	 * @returns {string} Returns the deburred string.
+	 * @example
+	 *
+	 * _.deburr('déjà vu');
+	 * // => 'deja vu'
+	 */
+	function deburr(string) {
+	  string = baseToString(string);
+	  return string && string.replace(reLatin1, deburrLetter);
+	}
+
+	module.exports = deburr;
+
+
+/***/ },
+/* 130 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseToString = __webpack_require__(99),
+	    isIterateeCall = __webpack_require__(42);
+
+	/** Used to match words to create compound words. */
+	var reWords = (function() {
+	  var upper = '[A-Z\\xc0-\\xd6\\xd8-\\xde]',
+	      lower = '[a-z\\xdf-\\xf6\\xf8-\\xff]+';
+
+	  return RegExp(upper + '+(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|[0-9]+', 'g');
+	}());
+
+	/**
+	 * Splits `string` into an array of its words.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category String
+	 * @param {string} [string=''] The string to inspect.
+	 * @param {RegExp|string} [pattern] The pattern to match words.
+	 * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+	 * @returns {Array} Returns the words of `string`.
+	 * @example
+	 *
+	 * _.words('fred, barney, & pebbles');
+	 * // => ['fred', 'barney', 'pebbles']
+	 *
+	 * _.words('fred, barney, & pebbles', /[^, ]+/g);
+	 * // => ['fred', 'barney', '&', 'pebbles']
+	 */
+	function words(string, pattern, guard) {
+	  if (guard && isIterateeCall(string, pattern, guard)) {
+	    pattern = null;
+	  }
+	  string = baseToString(string);
+	  return string.match(pattern || reWords) || [];
+	}
+
+	module.exports = words;
+
+
+/***/ },
+/* 131 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/** Used to map latin-1 supplementary letters to basic latin letters. */
+	var deburredLetters = {
+	  '\xc0': 'A',  '\xc1': 'A', '\xc2': 'A', '\xc3': 'A', '\xc4': 'A', '\xc5': 'A',
+	  '\xe0': 'a',  '\xe1': 'a', '\xe2': 'a', '\xe3': 'a', '\xe4': 'a', '\xe5': 'a',
+	  '\xc7': 'C',  '\xe7': 'c',
+	  '\xd0': 'D',  '\xf0': 'd',
+	  '\xc8': 'E',  '\xc9': 'E', '\xca': 'E', '\xcb': 'E',
+	  '\xe8': 'e',  '\xe9': 'e', '\xea': 'e', '\xeb': 'e',
+	  '\xcC': 'I',  '\xcd': 'I', '\xce': 'I', '\xcf': 'I',
+	  '\xeC': 'i',  '\xed': 'i', '\xee': 'i', '\xef': 'i',
+	  '\xd1': 'N',  '\xf1': 'n',
+	  '\xd2': 'O',  '\xd3': 'O', '\xd4': 'O', '\xd5': 'O', '\xd6': 'O', '\xd8': 'O',
+	  '\xf2': 'o',  '\xf3': 'o', '\xf4': 'o', '\xf5': 'o', '\xf6': 'o', '\xf8': 'o',
+	  '\xd9': 'U',  '\xda': 'U', '\xdb': 'U', '\xdc': 'U',
+	  '\xf9': 'u',  '\xfa': 'u', '\xfb': 'u', '\xfc': 'u',
+	  '\xdd': 'Y',  '\xfd': 'y', '\xff': 'y',
+	  '\xc6': 'Ae', '\xe6': 'ae',
+	  '\xde': 'Th', '\xfe': 'th',
+	  '\xdf': 'ss'
+	};
+
+	/**
+	 * Used by `_.deburr` to convert latin-1 supplementary letters to basic latin letters.
+	 *
+	 * @private
+	 * @param {string} letter The matched letter to deburr.
+	 * @returns {string} Returns the deburred letter.
+	 */
+	function deburrLetter(letter) {
+	  return deburredLetters[letter];
+	}
+
+	module.exports = deburrLetter;
 
 
 /***/ }

@@ -1,7 +1,6 @@
 import {isArray, isFunction} from 'lodash/lang'
 import assign from 'lodash/object/assign'
 
-var _            = require('lodash')
 var Promise      = require('./promise')
 var PassThrough  = require('readable-stream').PassThrough
 
@@ -40,7 +39,7 @@ export class BaseRunner {
         var sql = this.builder.toSQL()
         this.builder.emit('start', this.builder)
 
-        if (_.isArray(sql)) {
+        if (isArray(sql)) {
           return this.queryArray(sql)
         }
         return this.query(sql)
@@ -69,14 +68,14 @@ export class BaseRunner {
   stream(options, handler) {
     // If we specify stream(handler).then(...
     if (arguments.length === 1) {
-      if (_.isFunction(options)) {
+      if (isFunction(options)) {
         handler = options
         options = {}
       }
     }
 
     // Determines whether we emit an error or throw here.
-    var hasHandler = _.isFunction(handler)
+    var hasHandler = isFunction(handler)
 
     var stream  = new PassThrough({objectMode: true})
     var promise = Promise.bind(this)
@@ -85,7 +84,7 @@ export class BaseRunner {
         this.connection = connection
         var sql = this.builder.toSQL()
         var err = new Error('The stream may only be used with a single query statement.')
-        if (_.isArray(sql)) {
+        if (isArray(sql)) {
           if (hasHandler) throw err
           stream.emit('error', err)
         }
@@ -170,7 +169,7 @@ export class BaseRunner {
         throw new Error('Invalid transaction object provided.')
       }
       var sql = this.builder.toSQL()
-      if (_.isArray(sql)) {
+      if (isArray(sql)) {
         return runner.queryArray(sql)
       }
       return runner.query(sql)      

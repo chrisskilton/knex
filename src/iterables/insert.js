@@ -1,7 +1,7 @@
 import {INSERT_INTO} from '../sql/keywords'
 import {iterator, iterSymbol}    from 'transduce'
 
-export class InsertCompiler {
+export class InsertIterable {
 
   constructor(elements) {
     this.elements       = elements
@@ -10,7 +10,7 @@ export class InsertCompiler {
 
   [iterSymbol]() {
     let {table} = this.elements.single
-    return iterator([INSERT_INTO, new TableCompiler(table)])
+    return iterator([INSERT_INTO, new TableIterable(table)])
   }
 
 }

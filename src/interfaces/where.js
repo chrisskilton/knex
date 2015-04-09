@@ -1,6 +1,6 @@
 import {isPlainObject, isArray, isBoolean, isString} from 'lodash/lang'
 import {or, not, raw} from '../helpers'
-import {map, into}    from 'transduce'
+import {map, into, isIterable}    from 'transduce'
 import * as Builders  from '../builders/query'
 
 export const IWhere = {
@@ -152,7 +152,7 @@ function whereArity1(value) {
   if (typeof value === 'function') {
     var w   = new Builders.GroupedWhereBuilder()
     var out = value.call(w, w)
-    var val = out && typeof out.compile === 'function' ? out : w
+    var val = out && isIterable(out) ? out : w
     return new WhereClause(val)
   }
   if (isPlainObject(value)) {

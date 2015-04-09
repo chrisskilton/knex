@@ -1,21 +1,12 @@
 
 class Keyword {
-
   constructor(value) {
-    this.value = value
-    this.type  = 'keyword'
+    this['@@knex/value'] = value
+    this['@@knex/hook']  = 'keyword'
   }
-
-  toString() {
-    return this.value
-  }
-
-  ['@@knex/compile']() {
-    return this.value
-  }
-
 }
 
+export var _ALL_     = new Keyword('*')
 export var JOIN      = new Keyword('JOIN')
 export var INNER     = new Keyword('INNER')
 export var OUTER     = new Keyword('OUTER')

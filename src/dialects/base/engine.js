@@ -1,7 +1,7 @@
 
 // "Base Engine"
 // ------
-import _              from 'lodash'
+import clone          from 'lodash/lang/clone'
 import {EventEmitter} from 'events'
 import Promise        from './promise'
 
@@ -13,8 +13,8 @@ class Engine extends EventEmitter {
 
   constructor(config) {
     this.isDebugging     = false
-    this.migrationConfig = _.clone(config && config.migrations)
-    this.seedConfig      = _.clone(config && config.seeds)
+    this.migrationConfig = clone(config && config.migrations)
+    this.seedConfig      = clone(config && config.seeds)
   }
 
   get engine() {

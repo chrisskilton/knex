@@ -1,19 +1,17 @@
 
 class Delimiter {
-  constructor(value) {
-    this.value = value
-    this.type  = 'delimiter'
-  }
-  compile() {
-    return this.value
+  constructor(value, spacing) {
+    this['@@knex/hook']    = 'delimiter'
+    this['@@knex/value']   = value
+    this['@@knex/spacing'] = spacing
   }
 }
 
-function delimiter(value) {
-  return new Delimiter(value)
+function delimiter(value, spacing) {
+  return new Delimiter(value, spacing)
 }
 
-export var COMMA       = delimiter(',')
-export var SEMICOLON   = delimiter(';')
-export var LEFT_PAREN  = delimiter('(')
-export var RIGHT_PAREN = delimiter(')')
+export var COMMA       = delimiter(',', 'OMIT_PRECEDING')
+export var SEMICOLON   = delimiter(';', 'OMIT_PRECEDING')
+export var LEFT_PAREN  = delimiter('(', 'OMIT_FOLLOWING')
+export var RIGHT_PAREN = delimiter(')', 'OMIT_PRECEDING')

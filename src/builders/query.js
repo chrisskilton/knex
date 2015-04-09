@@ -1,21 +1,22 @@
-const compile = '@@knex/compile'
+import forEach                from 'lodash/collection/forEach'
+import {iterSymbol, iterator} from 'transduce'
 
-import {AbstractBuilder}  from './abstract'
-import {ISelect}          from '../interfaces/select'
-import {IWhere}           from '../interfaces/where'
-import {IHaving}          from '../interfaces/having'
-import {IDelete}          from '../interfaces/delete'
-import {IUpdate}          from '../interfaces/update'
-import {ITruncate}        from '../interfaces/truncate'
-import {IColumninfo}      from '../interfaces/columninfo'
-import {IJoin}            from '../interfaces/join'
+import {AbstractBuilder}      from './abstract'
+import {mixin}                from '../helpers'
 
-import {IRunnable}        from '../interfaces/runnable'
-import {IIterable}        from '../interfaces/iterable'
+import {ISelect}              from '../interfaces/select'
+import {IWhere}               from '../interfaces/where'
+import {IHaving}              from '../interfaces/having'
+import {IDelete}              from '../interfaces/delete'
+import {IUpdate}              from '../interfaces/update'
+import {ITruncate}            from '../interfaces/truncate'
+import {IColumninfo}          from '../interfaces/columninfo'
+import {IJoin}                from '../interfaces/join'
+import {IRunnable}            from '../interfaces/runnable'
+import {IIterable}            from '../interfaces/iterable'
 
-import {mixin}            from '../helpers'
-import {SubQueryCompiler} from '../compilers/query'
-import forEach            from 'lodash/collection/forEach'
+import {SubQueryIterable}     from '../iterables/query'
+import {GroupedWhereIterable} from '../iterables'
 
 export class QueryBuilder extends AbstractBuilder {
 
@@ -27,7 +28,6 @@ export class QueryBuilder extends AbstractBuilder {
     })
     return this
   }
-
 }
 
 mixin(QueryBuilder, ISelect)
@@ -41,42 +41,38 @@ mixin(QueryBuilder, IRunnable)
 mixin(QueryBuilder, IIterable)
 
 export class SubQueryBuilder extends AbstractBuilder {
-  [compile]() {
-    return new SubQueryCompiler(this)
+  [iterSymbol]() {
+    return iterator(new SubQueryIterable(this))
   }
 }
 mixin(SubQueryBuilder, ISelect)
 mixin(SubQueryBuilder, IWhere)
 mixin(SubQueryBuilder, IHaving)
-mixin(SubQueryBuilder, IIterable)
 
 export class GroupedWhereBuilder extends AbstractBuilder {
-  [compile]() {
-    return new GroupedWhereCompiler(this.container.get('wheres'))
+  [iterSymbol]() {
+    return iterator(new GroupedWhereIterable(this.container.get('wheres')))
   }
 }
 mixin(GroupedWhereBuilder, IWhere)
-mixin(GroupedWhereBuilder, IIterable)
 
 export class GroupedHavingBuilder extends AbstractBuilder {
-  [compile]() {
-    return new GroupedHavingCompiler(this)
+  [iterSymbol]() {
+    return iterator(new GroupedHavingIterable(this))
   }
 }
 mixin(GroupedHavingBuilder, IHaving)
-mixin(GroupedHavingBuilder, IIterable)
 
 export class JoinBuilder extends AbstractBuilder {
-  [compile]() {
-    return new JoinCompiler(this)
+  [iterSymbol]() {
+    return iterator(new JoinIterable(this))
   }
 }
 mixin(JoinBuilder, IJoin)
-mixin(JoinBuilder, IIterable)
 
 export class GroupedJoinBuilder extends JoinBuilder {
-  [compile]() {
-    return new GroupedJoinCompiler(this)
+  [iterSymbol]() {
+    return iterator(new GroupedJoinIterable(this))
   }
 }
 

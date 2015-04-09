@@ -2,6 +2,7 @@
 // -------
 import {AbstractBuilder}   from './abstract'
 import {raw}               from '../sql'
+import {iterSymbol}        from 'transduce'
 
 export class RawBuilder extends AbstractBuilder {
   
@@ -16,7 +17,7 @@ export class RawBuilder extends AbstractBuilder {
     return this
   }
 
-  compile() {
+  [iterSymbol]() {
     return [this.prefix, this.sql, this.suffix]
   }
 

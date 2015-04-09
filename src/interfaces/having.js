@@ -5,27 +5,27 @@ export var IHaving = {
   // [AND | OR] [NOT] HAVING expression
 
   having(...args) {
-    return this.__clause(having(args))
+    return this.__clause(havingDispatch(args))
   },
 
   notHaving(...args) {
-    return this.__clause(not(having(args)))
+    return this.__clause(not(havingDispatch(args)))
   },
 
   orHaving(...args) {
-    return this.__clause(or(having(args)))
+    return this.__clause(or(havingDispatch(args)))
   },
 
   orNotHaving(...args) {
-    return this.__clause(or(not(having(args))))
+    return this.__clause(or(not(havingDispatch(args))))
   },
 
   havingRaw(sql, bindings) {
-    return this.__clause(having(raw(sql, bindings)))
+    return this.__clause(havingDispatch(raw(sql, bindings)))
   },
   
   orHavingRaw(sql, bindings) {
-    return this.__clause(or(having(raw(sql, bindings))))
+    return this.__clause(or(havingDispatch(raw(sql, bindings))))
   },
 
   andHaving() {

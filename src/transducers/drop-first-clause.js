@@ -1,6 +1,6 @@
-import {transducer, drop, seq} from 'transduce'
+import {Transducer, drop, lazySeq} from 'transduce'
 
-class DropFirst {
+class DropFirst extends Transducer {
 
   constructor(val) {
     this.val  = val
@@ -8,14 +8,14 @@ class DropFirst {
   }
 
   compile() {
-    return sequence(drop(1), this.val.compile())
+    return lazySeq(drop(1), this.val)
   }
 
 }
 
-export function dropFirstClause(Ctor, prefix, values) {
+export const dropFirstClause(Ctor, prefix, values) {
   var seen;
-  return seq(transducer((step, value, input) => {
+  return lazySeq(transducer((step, value, input) => {
     if (input && !seen) {
       seen = true
       return step(value, [prefix, new DropFirst(new Ctor(input))])

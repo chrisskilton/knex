@@ -1,14 +1,14 @@
 
 class Parameter {
   constructor(value) {
-    this.value = value
-    this.type = 'parameter'
-  }
-  compile() {
-    return this.value
+    this['@@knex/value'] = value
+    this['@@knex/hook']  = 'parameter'
   }
 }
 
 export function parameter(value) {
+  if (value === undefined) {
+    return value
+  }
   return new Parameter(value)
 }
