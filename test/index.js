@@ -19,40 +19,47 @@ global.d = new Date();
 
 Promise.longStackTraces();
 
-var knex = require('../knex');
+var Knex = require('../knex');
 
 var clients = {
   maria: {
     name: 'maria',
-    client: knex({client: 'maria'}).client,
+    engine: Knex({dialect: 'maria'}),
     alias: 'mysql'
   },
   mysql: {
     name: 'mysql',
-    client: knex({client: 'mysql'}).client,
+    engine: Knex({dialect: 'mysql'}),
   },
   sqlite3: {
     name: 'sqlite3',
-    client: knex({client: 'sqlite3'}).client
+    engine: Knex({dialect: 'sqlite3'})
   },
   postgres: {
     name: 'postgres',
-    client: knex({client: 'postgres'}).client,
+    engine: Knex({dialect: 'postgres'}),
   },
   oracle: {
     name: 'oracle',
-    client: knex({client: 'oracle'}).client,
+    engine: Knex({dialect: 'oracle'}),
   }
 };
 
-describe('Unit tests', function() {
-  Object.keys(clients).forEach(function (clientName) {
-    require('./unit/schema/' + (clients[clientName].alias || clients[clientName].name))(clients[clientName].client);
-    require('./unit/query/builder')(function () { return new clients[clientName].client.QueryBuilder(); }, clients[clientName].name, clients[clientName].alias);
-  });
-});
+describe('Unit tests', () => {
+  
+  Object.keys(clients).forEach((clientName) => {
+    // require('./unit/schema/' + (clients[clientName].alias || clients[clientName].name))(clients[clientName].client);
+    
+    require('./unit/query/builder')(
+      clients[clientName].engine.Builder,
+      clients[clientName].name, 
+      clients[clientName].alias
+    )
+  })
+
+})
 
 // Integration Tests
-describe('Integration Tests', function() {
-  require('./integration')(this);
-});
+// describe('Integration Tests', function() {
+//   require('./integration')(this);
+// });

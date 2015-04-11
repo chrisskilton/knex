@@ -1,10 +1,9 @@
-import isArray from 'lodash/lang/isArray'
 import forEach from 'lodash/collection/forEach'
 import {map, protocols, Transducer, lazySeq, iterator, iterSymbol} from 'transduce'
 import {LEFT_PAREN, RIGHT_PAREN}   from '../../sql/delimiters'
-import {AND, OR, NOT, WHERE}       from '../../sql/keywords'
+import {AND, OR, NOT, WHERE, isKeyword} from '../../sql/keywords'
 import {identifier as i}           from '../../sql/identifier'
-import {parameter as p}            from '../../sql/parameter'
+import {parameter as p}            from '../../sql'
 import {WhereHavingIterable}       from './abstract'
 
 const {transducer: {step: tStep, result: tResult}} = protocols
@@ -20,13 +19,16 @@ export class WhereClauseIterable {
 
   [iterSymbol]() {
     let {where} = this
-    if (isArray(where)) {
+    if (Array.isArray(where)) {
       return lazySeq(map((val) => new WhereClauseIterable(val)), where)
     }
+    var prefixNot = where.__negated && !isKeyword(where.operator)
+    var suffixNot = where.__negated && isKeyword(where.operator)
     return iterator([
       where.__or ? OR : AND,
-      where.__negated ? NOT : undefined,
+      prefixNot ? NOT : undefined,
       i(where.column),
+      suffixNot ? NOT : undefined,
       where.operator,
       p(where.value)
     ])

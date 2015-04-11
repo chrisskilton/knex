@@ -1,15 +1,45 @@
 // "Base Engine"
 // ------
 import cloneDeep      from 'lodash/lang/clone'
-import Promise        from './promise'
 import {EventEmitter} from 'events'
+import Promise        from './promise'
 
 export default class Engine extends EventEmitter {
 
   constructor(config = {}) {
+    super()
     this.isDebugging     = false
     this.migrationConfig = cloneDeep(config.migrations)
     this.seedConfig      = cloneDeep(config.seeds)
+    // this.pool         = new this.Pool(config.pool)
+  }
+
+  get engine() {
+    return this.dialect
+  }
+
+  // Return the database being used by this engine.
+  get databaseName() {
+    return this.connectionSettings.database
+  }
+
+  // Converts a "builder" into SQL which is properly parameterized
+  builderToSQL(builder) {
+    if (builder.__cache) {
+      return builder.__cache
+    }
+    var bindings = []
+    builder.addHook('beforeSpace', (val) => {
+      if (val['@@knex/hook'] === 'parameter') {
+        bindings.push(val['@@knex/value'])
+        return '?'
+      }
+      return val
+    })
+    return {
+      sql: builder.toString(),
+      bindings: bindings
+    }
   }
 
   // Acquire a connection from the pool.
@@ -47,28 +77,19 @@ export default class Engine extends EventEmitter {
     if (typeof callback === 'function') {
       promise.asCallback(callback)
     } else {
-      return promise;
+      return promise
     }
   }
 
   // Runs the SQL in a file
   runFile(fileName, bindings, options) {
-    fs = fs || require('fs')
     return new Promise((resolver, rejecter) => {
-      fs.readFile(fileName, 'UTF-8', (err, str) => {
+      require('fs').readFile(fileName, 'UTF-8', (err, str) => {
         if (err) return rejecter(err)
-        
       })
     })
   }
 
-  get engine() {
-    return this.dialect
-  }
-
-  // Return the database being used by this engine.
-  get databaseName() {
-    return this.connectionSettings.database
-  }
-
 }
+
+Engine.prototype['@@__KNEX_ENGINE__@@'] = true

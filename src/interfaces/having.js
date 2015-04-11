@@ -42,7 +42,7 @@ class Having {
     this.negated        = false
     this.or             = false
     this.wrapped        = false
-    this['@@knex/hook'] = 'having'
+    this['@@knex/hook'] = 'clause:having'
   }
 
 }

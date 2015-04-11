@@ -55,7 +55,7 @@ _.each(modifiers, function(method) {
       method = aliasMethod[method];
     }
     if (method === 'notNullable') return this.nullable(false);
-    this._modifiers[method] = _.toArray(arguments);
+    this._modifiers[method] = Array.toArray(arguments);
     return this;
   };
 });
@@ -64,7 +64,7 @@ _.each(['index', 'primary', 'unique'], function(method) {
   ColumnBuilder.prototype[method] = function() {
     if (this._type.toLowerCase().indexOf('increments') === -1) {
       this._tableBuilder[method].apply(this._tableBuilder,
-        [this._args[0]].concat(_.toArray(arguments)));
+        [this._args[0]].concat(Array.toArray(arguments)));
     }
     return this;
   };

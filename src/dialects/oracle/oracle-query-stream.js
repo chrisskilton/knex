@@ -1,23 +1,17 @@
-
-
 /*jslint node:true, nomen: true*/
 var Readable = require('stream').Readable;
 
-var _ = require('lodash');
+import merge from 'lodash/object/merge'
 
-function OracleQueryStream(connection, sql, bindings, options) {
-  try {
-    Readable.call(this, _.merge({}, {
+class OracleQueryStream extends Readable {
+  constructor(connection, sql, bindings, options) {
+    super(merge({
       objectMode: true,
       highWaterMark: 1000
-    }, options));
-
+    }, options))
     this.oracleReader = connection.reader(sql, bindings || []);
-  } catch (err) {
-    throw err;
   }
 }
-inherits(OracleQueryStream, Readable);
 
 OracleQueryStream.prototype._read = function() {
   var self = this;

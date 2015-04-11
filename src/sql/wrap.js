@@ -1,14 +1,15 @@
-import {LEFT_PAREN, RIGHT_PAREN} from './keywords'
+import {LEFT_PAREN, RIGHT_PAREN} from './delimiters'
+import {iterSymbol, iterator} from 'transduce'
 
 class Wrapped {
   constructor(value, prefix, suffix) {
     this.prefix = prefix
     this.value  = value
     this.suffix = suffix
-    this.type   = 'wrapped'
+    this['@@knex/hook'] = 'wrappedValue'
   }
-  compile() {
-    return [this.prefix, this.value, this.suffix]
+  [iterSymbol]() {
+    return iterator([this.prefix, this.value, this.suffix])
   }
 }
 export function wrap(value, prefix = LEFT_PAREN, suffix = RIGHT_PAREN) {

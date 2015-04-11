@@ -15,11 +15,10 @@ class ClauseIterator {
   constructor(value) {
     this.value    = value
     this.idx      = 0
-    this.complete = !value || !value.length
   }
 
   next() {
-    if (this.complete || this.idx >= this.value.length) return DONE
+    if (!this.value || this.idx >= this.value.length) return DONE
     return {done: false, value: this.value[this.idx++]}
   }
 
@@ -27,9 +26,9 @@ class ClauseIterator {
 
 export class WhereHavingIterable {
 
-  constructor(whereOrHaving, ClauseIterable) {
+  constructor(whereOrHaving, Iterable) {
     this.keyword  = whereOrHaving
-    this.Iterable = ClauseIterable
+    this.Iterable = Iterable
   }
 
   [iterSymbol]() {
@@ -50,7 +49,7 @@ class DropFirst {
   }
 
   next() {
-    if (this.idx >= this.clauses.length) return DONE
+    if (!this.clauses || this.idx >= this.clauses.length) return DONE
     if (!this.seen) {
       this.seen = true
       return {done: false, value: [this.keyword, lazySeq(drop(1), new this.Iterable(this.clauses[this.idx++]))]}

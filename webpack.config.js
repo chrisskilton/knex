@@ -10,6 +10,17 @@ module.exports = {
     filename: 'knex.build.js'
   },
 
+  externals: {
+    "fs":     "fs",
+    "pg":     "pg",
+    "pg.js":  "pg.js",
+    "mysql":  "mysql",
+    "mysql":  "mysql2",
+    "oracle": "oracle",
+    "mysql":  "mysql2",
+    "pg-query-stream": "pg-query-stream"
+  },
+
   module: {
     loaders: [
       { 

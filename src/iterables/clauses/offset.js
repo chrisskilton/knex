@@ -1,15 +1,16 @@
 import {OFFSET} from '../../sql/keywords'
+import {iterSymbol, iterator, iterdone} from 'transduce'
 
 export class OffsetIterable {
 
   constructor(value) {
     this.value = value
-    this.type  = 'clause:offset'
+    this['@@knex/hook'] = 'clause:offset'
   }
 
-  ['@@knex/compile']() {
-    if (!this.value) return
-    return [OFFSET, this.value]
+  [iterSymbol]() {
+    if (!this.value) return iterdone
+    return iterator([OFFSET, this.value])
   }
 
 }

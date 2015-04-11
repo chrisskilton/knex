@@ -1,3 +1,5 @@
+import {isNull, isArray, isString, isNumber} from 'lodash/lang'
+
 import {QueryIterable}  from '../iterables/query'
 import {InsertIterable} from '../iterables/insert'
 import {DeleteIterable} from '../iterables/delete'
@@ -11,8 +13,6 @@ import {isIterable, isIterator, filter, iterSymbol, lazySeq, interpose,
 
 const {step: tStep, result: tResult} = protocols.transducer
 
-import {isNull, isArray, isString, isNumber} from 'lodash/lang'
-
 export const IIterable = {
   [Symbol.iterator]() {
     return compileFrom(this)
@@ -21,8 +21,11 @@ export const IIterable = {
 
 function compileFrom(builder) {
   let {container} = builder
-  let hooks       = container.get('hooks')
-  return sqlSeq(hooks, iterator(compileTarget(container)))
+  let hooks       = builder.hooks
+  let iter        = builder.__iterator 
+    ? builder.__iterator() 
+    : iterator(compileTarget(container))
+  return sqlSeq(hooks, iter)
 }
 
 function compileTarget(container) {
@@ -41,9 +44,8 @@ const SPACE     = {done: false, value: ' '}
 // The root seq takes a "transducer",
 // and returns a lazy iterator.
 function sqlSeq(hooks, iterator) {
-  return lazySeq(pipeline, new RootIterator(hooks, iterator))
+  return lazySeq(pipeline(hooks), new RootIterator(hooks, iterator))
 }
-
 
 class RootIterator extends FlattenIterator {
 
@@ -54,10 +56,12 @@ class RootIterator extends FlattenIterator {
 
   __next(value) {
     if (value && value['@@knex/hook']) {
-      var hookName  = value['@@knex/hook']
-      var camelized = camelCase(hookName)
-      if (this.hooks.has(camelized)) {
-        var hook = first(hooks.get(camelized))
+      var hookName = value['@@knex/hook']
+      var name     = camelCase(hookName)
+      if (this.hooks.has(name)) {
+        let hookToRun  = this.hooks.get(name)
+        let otherHooks = this.hooks.rest(name)
+        value = hookToRun(value, otherHooks)        
       }
     }
     return super.__next(value)
@@ -65,9 +69,9 @@ class RootIterator extends FlattenIterator {
 
 }
 
-const buffer = n => xf => new Buffer(n, xf)
+const buffer = n => xf => new Buffered(n, xf)
 
-class Buffer extends Transducer {
+class Buffered extends Transducer {
 
   constructor(n, xf) {
     super(xf)
@@ -84,10 +88,8 @@ class Buffer extends Transducer {
   }
 
   [tResult](result) {
-    if (this.buffer.length > 0) {
-      var buffer  = this.buffer
-      this.buffer = []
-      result = this.xfStep(result, buffer)
+    while(this.buffer.length > 0) {
+      result = this.xfStep(result, this.buffer)
     }
     return this.xfResult(result)
   }
@@ -109,7 +111,7 @@ class AddSpaces extends Transducer {
     if (pendingSpace) {
       result = this.xfStep(result, ' ')
     }
-    if (a['@@knex/spacing'] !== 'OMIT_FOLLOWING' && 
+    if (value.length > 1 && a['@@knex/spacing'] !== 'OMIT_FOLLOWING' && 
         b['@@knex/spacing'] !== 'OMIT_PRECEDING') {
       this.pendingSpace = true
     }
@@ -119,21 +121,50 @@ class AddSpaces extends Transducer {
 }
 
 const addSpaces = compose(
-  buffer(3),
-  (xf) => new AddSpaces(xf)
-)
-
-const pipeline = compose(
-
-  filter((val) => val !== undefined),
   
-  addSpaces,
+  buffer(3),
 
-  map((val) => {
-    if (val['@@knex/value']) {
-      return val['@@knex/value']
-    }
-    return val
-  })
+  (xf) => new AddSpaces(xf)
 
 )
+
+const undef = (val) => val !== undefined
+
+function flattenIterator() {
+
+}
+
+function hook(name, hooks) {
+  if (hooks.has(name)) {
+    let hookToRun  = hooks.get(name)
+    let otherHooks = hooks.rest(name)
+    return map((val) => {
+      return hookToRun(val, otherHooks)
+    })
+  }
+}
+
+function pipeline(hooks) {
+
+  var toCompose = [
+
+    filter(undef),
+
+    hook('beforeSpace', hooks),
+
+    addSpaces,
+
+    hook('afterSpace', hooks),
+
+    map((val) => {
+      if (val['@@knex/value']) {
+        return val['@@knex/value']
+      }
+      return val
+    })
+
+  ]
+
+  return compose(...toCompose.filter(undef))
+
+}

@@ -3,7 +3,7 @@ import Runner from '../runner'
 class TransactionRunner extends Runner {
 
   constructor(engine) {
-    this.engine = engine
+    super(engine)
   }
 
   // Run the transaction on the correct "runner" instance.

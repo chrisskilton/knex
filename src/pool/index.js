@@ -2,7 +2,7 @@
 // -------
 import _       from 'lodash'
 import Pool2   from 'pool2'
-import Promise from './promise'
+import Promise from '../promise'
 
 const DEFAULT_MIN = 2
 const DEFAULT_MAX = 10

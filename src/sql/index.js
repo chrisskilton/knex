@@ -1,67 +1,62 @@
-
-import isArray from 'lodash/lang/isArray'
+import {iterSymbol, isIterator, iterator, lazySeq, transducer} from 'transduce'
 import {identifier as i} from './identifier'
 import {AS, DISTINCT} from './keywords'
+import {isPlainObject} from 'lodash/lang'
 
-class Table {
+// ----------------
+
+class Parameter {
   constructor(value) {
-    this.value    = value
-    this.grouping = 'table'
-  }
-  compile() {
-    return i(this.value)
+    this['@@knex/value'] = value
+    this['@@knex/hook']  = 'parameter'
   }
 }
-export function table(value) {
-  return new Table(value)
-}
-
-class Column {
-  constructor(value) {
-    this.value    = value
-    this.distinct = false
-    this.alias    = undefined
-    this.type     = 'column'
-    this.grouping = 'columns'
+export function parameter(value) {
+  if (value === undefined || isIterator(value) || (value && value['@@knex/hook'])) {
+    return value
   }
-  compile() {
-    return [
-      this.distinct ? DISTINCT : undefined,
-      i(this.value),
-      this.alias ? AS : undefined,
-      i(this.alias)
-    ]
-  }
+  return new Parameter(value)
 }
 
-export function column(value) {
-  return new Column(value)
-}
+// ----------------
 
-export function columns(...cols) {
-  return cols.map((val) => new Column(val))
-}
+// class Column {
+//   constructor(value) {
+//     this.value    = value
+//     this.alias    = undefined
+//     this.type     = 'column'
+//     this.grouping = 'columns'
+//   }
+//   compile() {
+//     return [
+//       i(this.value),
+//       this.alias ? AS : undefined,
+//       this.alias ? i(this.alias) : undefined
+//     ]
+//   }
+// }
+// export function column(value) {
+//   return new Column(value)
+// }
+// export function columns(...cols) {
+//   return cols.map((val) => new Column(val))
+// }
 
-class Cast {}
-
-function cast(expression, type) {
-  return new Cast(expression, type)
-}
-
-class Fn {
-  constructor(fnName, params) {
-    this.fnName = fnName
-    this.params = params
-  }
-  build(builder) {
-    return [`${fnName}(`, i(this.params), `)`]
-  }
-}
+// ----------------
 
 /**
  * Creates a new sql function call
  * @return {Fn} Instance of Fn class
  */
+class Fn {
+  constructor(fnName, params) {
+    this.fnName = fnName
+    this.params = params
+  }
+  [iterSymbol]() {
+    return [`${fnName}(`, i(this.params), `)`]
+  }
+}
 export function fn(fnName, ...params) {
   if (typeof fnName !== 'string') {
     throw new TypeError('The sql.fn takes a function as a string')
@@ -89,46 +84,12 @@ function alias(source, aliased) {
   return new Alias(source, aliased)
 }
 
-// Ordering:
-
-export function groupBy(value) {
-  return new Node('GroupBy', value)
-}
-
-export function orderBy(value, direction = 'ASC') {
-  return new Node('OrderBy', value, direction)
-}
-
-// Limit, Offset:
-
-class LimitOffsetClause {
-
-  constructor(type, value) {
-    this.type     = type
-    this.value    = value
-    this.grouping = 'limitOffset'
-  }
-
-  build(target) {
-    return [this.type, p(this.value)]
-  }
-
-}
-
-function limit(value) {
-  return new LimitOffsetClause(kwd.LIMIT, value)
-}
-
-function offset(value) {
-  return new LimitOffsetClause(kwd.OFFSET, value)
-}
-
 export function set(values) {
   if (arguments.length !== 1) {
     throw new TypeError('Set takes an object or iterable')
   }
-  if (isArray(values) && values.length > 0) {
-    if (!isArray(values[0]) || values[0].length !== 2) {
+  if (Array.isArray(values) && values.length > 0) {
+    if (!Array.isArray(values[0]) || values[0].length !== 2) {
       throw new TypeError()
     }
     for (var [k, v] of values) {
@@ -146,28 +107,43 @@ class RawClause {
     this.sql      = sql
     this.bindings = bindings
   }
-  compile() {
-    // TODO: Split the raw string and mixin the bindings
+  [iterSymbol]() {
     if (typeof this.sql === 'string') {
-      return compileRaw(this.sql, this.bindings)
+      if (this.bindings !== undefined) {
+        return compileRaw(this.sql, this.bindings)
+      }
     }
-    return this.sql
+    return iterator(this.sql)
   }
 }
 
-function compileRaw(sql, bindings) {
-  if (isArray(bindings)) {
-
-  } else if (isPlainObject(bindings)) {
-
+export function raw(sql, bindings) {
+  if (arguments.length === 2) {
+    if (!Array.isArray(bindings) && !isPlainObject(bindings)) {
+      throw new Error('The second argument to a knex.raw call must be an array or object')
+    }
+    return new RawClause(sql, bindings)
   }
-  return sql
+  return new RawClause(sql)
+}
+
+function compileRaw(sql, bindings) {
+  if (Array.isArray(bindings)) {
+    var pieces = sql.split('?')
+    if (pieces.length - 1 !== bindings.length) {
+      throw new Error(`Expected raw bindings to have length of ${pieces.length - 1}, has ${bindings.length}`)
+    }
+    var i = 0
+    return lazySeq(transducer((step, value, input) => {
+      if (input === '') return value
+      return step(step(value, input.trim()), parameter(bindings[i++]))
+    }), pieces)
+  } 
+  else {
+    throw new Error('Named raw not yet supported')
+  }
 }
 function compileNamedRaw(sql, obj) {
   var keys = Object.keys(obj)
   // for ()
-}
-
-export function raw(sql, bindings) {
-  return new RawClause(sql, bindings)
 }

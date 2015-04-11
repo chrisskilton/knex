@@ -1,11 +1,9 @@
-var crypto = require('crypto');
-var _ = require('lodash');
 
 var helpers  = require('../../helpers');
 
-function generateCombinedName(postfix, name, subNames) {
+export function generateCombinedName(postfix, name, subNames) {
   var limit = 30;
-  if (!_.isArray(subNames)) subNames = subNames ? [subNames] : [];
+  if (!Array.isArray(subNames)) subNames = subNames ? [subNames] : [];
   var table = name.replace(/\.|-/g, '_');
   var subNamesPart = subNames.join('_');
   var result = (table + '_' + (subNamesPart.length ? subNamesPart + '_': '') + postfix).toLowerCase();
@@ -20,20 +18,18 @@ function generateCombinedName(postfix, name, subNames) {
   return result;
 }
 
-function wrapSqlWithCatch(sql, errorNumberToCatch) {
+export function wrapSqlWithCatch(sql, errorNumberToCatch) {
   return "begin execute immediate '" + sql.replace(/'/g, "''") + "'; exception when others then if sqlcode != " + errorNumberToCatch + " then raise; end if; end;";
 }
 
-function ReturningHelper(columnName) {
-  this.columnName = columnName;
-}
+export class ReturningHelper {
+  
+  constructor(columnName) {
+    this.columnName = columnName;
+  }
 
-ReturningHelper.prototype.toString = function () {
-  return '[object ReturningHelper:' + this.columnName + ']';
-};
+  toString() {
+    return '[object ReturningHelper:' + this.columnName + ']';
+  }
 
-module.exports = {
-  generateCombinedName: generateCombinedName,
-  wrapSqlWithCatch: wrapSqlWithCatch,
-  ReturningHelper: ReturningHelper
-};
+} 

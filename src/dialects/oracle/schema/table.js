@@ -4,7 +4,6 @@
 // -------
 module.exports = function(client) {
 
-var inherits = require('inherits');
 var Schema   = require('../../../schema');
 var utils    = require('../utils');
 var helpers  = require('../../../helpers');
@@ -16,7 +15,6 @@ function TableBuilder_Oracle() {
   this.client = client;
   Schema.TableBuilder.apply(this, arguments);
 }
-inherits(TableBuilder_Oracle, Schema.TableBuilder);
 
 // Table Compiler
 // ------
@@ -26,7 +24,6 @@ function TableCompiler_Oracle() {
   this.Formatter = client.Formatter;
   Schema.TableCompiler.apply(this, arguments);
 }
-inherits(TableCompiler_Oracle, Schema.TableCompiler);
 
 // Compile a rename column command.
 TableCompiler_Oracle.prototype.renameColumn = function(from, to) {

@@ -4,6 +4,7 @@ import {JOIN} from './keywords'
 class Join extends Clause {
 
   constructor(joinType, a) {
+    super()
     this.joinType  = joinType
     this.column    = column
     this.value     = value
@@ -12,7 +13,7 @@ class Join extends Clause {
   }
 
   build(compile) {
-    let {joinType, column, value}
+    let {joinType, column, value} = this
     return [joinType, kwd.JOIN, column, value]
   }
 
@@ -26,35 +27,35 @@ function on() {
 
 }
 
-var joins = this.grouped.join;
-if (!joins) return '';
-var sql = _.reduce(joins, function(acc, join) {
-  if (join.joinType === 'raw') {
-    acc.push(this.formatter.checkRaw(join.table));
-  } else {
-    acc.push(join.joinType + ' join ' + this.formatter.wrap(join.table));
-    _.each(join.clauses, function(clause, i) {
-      acc.push(i > 0 ? clause[1] : clause[0]);
-      acc.push(this.formatter.wrap(clause[2]));
-      if (clause[3]) acc.push(this.formatter.operator(clause[3]));
-      if (clause[4]) acc.push(this.formatter.wrap(clause[4]));
-    }, this);
-  }
-  return acc;
-}, [], this);
-return sql.length > 0 ? sql.join(' ') : '';
+// var joins = this.grouped.join;
+// if (!joins) return '';
+// var sql = _.reduce(joins, function(acc, join) {
+//   if (join.joinType === 'raw') {
+//     acc.push(this.formatter.checkRaw(join.table));
+//   } else {
+//     acc.push(join.joinType + ' join ' + this.formatter.wrap(join.table));
+//     _.each(join.clauses, function(clause, i) {
+//       acc.push(i > 0 ? clause[1] : clause[0]);
+//       acc.push(this.formatter.wrap(clause[2]));
+//       if (clause[3]) acc.push(this.formatter.operator(clause[3]));
+//       if (clause[4]) acc.push(this.formatter.wrap(clause[4]));
+//     }, this);
+//   }
+//   return acc;
+// }, [], this);
+// return sql.length > 0 ? sql.join(' ') : '';
 
-function joinArity1(join) {
-  if (isClause(join)) {
+// function joinArity1(join) {
+//   if (isClause(join)) {
     
-  }
-  if (isString(join)) {
+//   }
+//   if (isString(join)) {
     
-  }
-  if (isFucntion(join)) {
+//   }
+//   if (isFucntion(join)) {
     
-  }
-}
+//   }
+// }
 
 export function join(joinType, args) {
   switch(args.length) {
@@ -71,7 +72,7 @@ export function join(joinType, args) {
   } else {
     join = new Join(table, joinType);
     if (arguments.length > 1) {
-      join.on.apply(join, _.toArray(arguments).slice(1));
+      join.on.apply(join, Array.toArray(arguments).slice(1));
     }
   }
   this._statements.push(join);

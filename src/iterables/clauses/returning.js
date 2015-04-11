@@ -1,8 +1,8 @@
 
-export class Returning {
+export class ReturningIterable {
 
-  ['@@knex/compile']() {
-    
+  [iterSymbol]() {
+    return iterable([RETURNING, this.value])
   }
 
 }

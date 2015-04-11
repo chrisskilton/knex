@@ -1,15 +1,47 @@
 import _       from 'lodash'
-import isArray from 'lodash/lang/isArray'
-import {alias} from './sql'
+import {filter, interpose, map, compose, iterator, lazySeq, FlattenIterator} from 'transduce'
+import {COMMA} from './sql/delimiters'
+import {AS} from './sql/keywords'
+import {identifier} from './sql/identifier'
+import {parameter} from './sql'
+
+export function knexFlatten(transducer, target) {
+  return lazySeq(transducer, new FlattenIterator(iterator(target), (val) => {
+    return val && val['@@knex/hook']
+  }))
+}
+
+function commaSeparated(wrappingValue) {
+  return compose(
+    map(extractAlias),
+    map((value) => wrappingValue(value)),
+    filter((value) => value !== undefined),
+    interpose(COMMA)
+  )
+}
+
+export function columnize(values, shallow) {
+  var pipeline = commaSeparated(identifier)
+  return shallow
+    ? lazySeq(pipeline, values)
+    : knexFlatten(pipeline, values)
+}
+
+export function parameterize(values, shallow) {
+  var pipeline = commaSeparated(parameter)
+  return shallow
+    ? lazySeq(pipeline, values)
+    : knexFlatten(pipeline, values)
+}
 
 export function or(obj) {
-  if (isArray(obj)) return obj.map((val) => or(val))
+  if (Array.isArray(obj)) return obj.map((val) => or(val))
   obj.__or = true
   return obj
 }
 
 export function not(obj) {
-  if (isArray(obj)) return obj.map((val) => not(val))
+  if (Array.isArray(obj)) return obj.map((val) => not(val))
   obj.__negated = true
   return obj
 }
@@ -46,9 +78,9 @@ export function extractAlias(val) {
   if (typeof val !== 'string') return val;
   var asIndex = val.toLowerCase().indexOf(' as ')
   if (asIndex !== -1) {
-    return [val.slice(0, asIndex), val.slice(asIndex + 4)]
+    return [identifier(val.slice(0, asIndex)), AS, identifier(val.slice(asIndex + 4))]
   }
-  return [val]
+  return val
 }
 
 export function clause(builder, element, single) {
@@ -73,7 +105,7 @@ export function clause(builder, element, single) {
   
   if (single) {
     builder.elements.single[element.grouping] = element
-  } else if (isArray(element)) {
+  } else if (Array.isArray(element)) {
     for (let item of element) {
       builder = clause(builder, item)
     }

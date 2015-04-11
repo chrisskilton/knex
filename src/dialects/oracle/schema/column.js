@@ -2,7 +2,7 @@
 // checkIn added to the builder to allow the column compiler to change the
 // order via the modifiers ("check" must be after "default")
 ColumnBuilder_Oracle.prototype.checkIn = function () {
-  this._modifiers.checkIn = _.toArray(arguments);
+  this._modifiers.checkIn = Array.toArray(arguments);
   return this;
 };
 

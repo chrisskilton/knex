@@ -1,4 +1,5 @@
-import {SELECT}   from '../sql/keywords'
+import {SELECT, DISTINCT} from '../sql/keywords'
+import {LEFT_PAREN, RIGHT_PAREN} from '../sql/delimiters'
 import {iterator, iterSymbol} from 'transduce'
 
 import {
@@ -18,6 +19,7 @@ export class QueryIterable {
     let t = this.container
     return iterator([
       SELECT,
+      t.has('distinct') ? DISTINCT : undefined,
       new ColumnIterable(t.get('columns')),
       new FromIterable(t.get('from') || this.get('table')),
       new WhereIterable(t.get('wheres')),
@@ -34,6 +36,8 @@ export class QueryIterable {
 
 export class SubQueryIterable extends QueryIterable {
 
-  
+  [iterSymbol]() {
+    return iterator([LEFT_PAREN, super[iterSymbol](), RIGHT_PAREN])
+  }
 
 }

@@ -28,3 +28,8 @@ export var DISTINCT  = new Keyword('DISTINCT')
 export var NOT       = new Keyword('NOT')
 export var EXISTS    = new Keyword('EXISTS')
 export var IN        = new Keyword('IN')
+export var BETWEEN   = new Keyword('BETWEEN')
+
+export function isKeyword(val) {
+  return val && val['@@knex/hook'] === 'keyword'
+}

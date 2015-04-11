@@ -1,11 +1,10 @@
 // MariaSQL Runner
 // ------
-
-var _          = require('lodash');
-var SqlString  = require('../mysql/string');
-var Promise    = require('../../promise');
-var Runner     = require('../../runner');
-var helpers    = require('../../helpers');
+import Promise   from '../../promise'
+import pluck     from 'lodash/collection/pluck'
+import SqlString from '../mysql/string'
+import Runner    from '../../runner'
+import helpers   from '../../helpers'
 
 // Inherit from the `Runner` constructor's prototype,
 // so we can add the correct `then` method.
@@ -61,7 +60,7 @@ export class Runner_MariaSQL extends Runner {
       case 'pluck':
       case 'first':
         var resp = helpers.skim(rows);
-        if (method === 'pluck') return _.pluck(resp, obj.pluck);
+        if (method === 'pluck') return pluck(resp, obj.pluck);
         return method === 'first' ? resp[0] : resp;
       case 'insert':
         return [data.insertId];

@@ -1,7 +1,6 @@
-import isArray   from 'lodash/lang/isArray'
 import * as kwd  from './keywords'
 
-import {parameter as p} from './parameter'
+import {parameter as p} from './index'
 import {identifier as i} from './identifier'
 
 class Operator {
@@ -10,10 +9,7 @@ class Operator {
   }
 }
 
-// AND, OR, NOT
-class LogicalOperator extends Operator {}
-
-class AllOperator extends LogicalOperator {
+class AllOperator {
 
   constructor(expression, comparison, subquery) {
     this.expression = expression
@@ -32,7 +28,7 @@ function all(fn) {
 }
 
 // <, >, <=, >=, =, <>, !=, BETWEEN
-class ComparisonOperator extends Operator {
+class ComparisonOperator {
   constructor(operator, lhs, rhs) {
     this.lhs      = lhs
     this.rhs      = rhs
@@ -44,14 +40,14 @@ class ComparisonOperator extends Operator {
   }
 }
 
-class BetweenOperator extends ComparisonOperator {
+class BetweenOperator {
   nodes() {
     return [this.operator, p(this.lhs), kwd.AND, p(this.rhs)]
   }
 }
 
 // +, -, *, /, %, ^, |/, ||/, !, !!, @, &, |, #, ~, <<, >>
-class ArithmeticOperator extends Operator {
+class ArithmeticOperator {
   constructor() {
     this.type = 'ArithmeticOperator'
   }
@@ -62,14 +58,6 @@ class ArithmeticOperator extends Operator {
 
 export function between(a, b) {
   return new BetweenOperator(kwd.BETWEEN, a, b)
-}
-
-export function not(statement) {
-  return new LogicalOperator(kwd.NOT, statement)
-}
-
-export function or(statement) {
-  return new LogicalOperator(kwd.OR, statement)
 }
 
 export function any(subquery) {
@@ -201,10 +189,6 @@ export function leftShift() {
 
 // IS NULL
 export function isNull() {
-
-}
-
-export function and() {
 
 }
 

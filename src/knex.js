@@ -6,12 +6,18 @@
 // For details and documentation:
 // http://knexjs.org
 
-import assign from 'lodash/object/assign'
+import {EventEmitter} from 'events'
 
-import {QueryBuilder} from './builders/query'
+import assign         from 'lodash/object/assign'
+import {BaseBuilder}  from './builders/query'
+import {RawBuilder}   from './builders/raw'
+
+import DialectEngines from './dialects'
+
 // import SchemaBuilder from './schema/builder'
 
-import Raw        from './raw'
+import {isEngine, warn} from './util'
+
 
 function Knex(engineOrConf) {
   if (!isEngine(engineOrConf)) {
@@ -27,41 +33,44 @@ assign(Knex, {
   },
 
   // new Builder([engine]).select('*').from('accounts')
-  Builder: QueryBuilder,
+  Builder: BaseBuilder,
 
   // new SchemaBuidler([engine]).createTable(tableName, () => {})
   // SchemaBuidler,
 
-  raw(query, bindings) {
-    deprecate('Knex.raw', 'Knex.sql.raw')
-    return sql.raw(query, bindings)
+  raw() {
+    return sql.raw(...arguments)
   }
 
 })
 
 function makeEngine(config) {
-  var Engine
-  var dialectStr = dialectAlias[config.dialect] || config.dialect
-  try {
-    Engine = null // require(`${__dirname}/dialects/${dialectStr}`)  
-  } catch (e) {
-    throw new Error(`${dialectStr} is not a valid Knex client, did you misspell it?`)
+  var dialect = config.dialect
+  if (!dialect && config.client) {
+    warn('client has now been renamed "dialect" in the knex config options')
+    dialect = config.client
   }
+  var dialectStr = dialectAlias[dialect] || dialect
+  if (!DialectEngines.hasOwnProperty(dialectStr)) {
+    throw new Error(`${dialectStr} is not a valid Knex engine, did you misspell it?`)
+  }
+  let Engine = DialectEngines[dialectStr]
   return new Engine(config)
 }
 
 const dialectAlias = {
   'mariadb'       : 'maria',
   'mariasql'      : 'maria',
-  'pg'            : 'postgres',
-  'postgresql'    : 'postgres',
+  'pg'            : 'postgresql',
+  'postgres'      : 'postgresql',
   'sqlite'        : 'sqlite3'
 }
 
 function makeKnex(engine) {
 
-  class KnexBuilder extends GenericBuilder {}
-
+  class KnexBuilder extends BaseBuilder {}
+  class KnexRaw     extends RawBuilder {}
+  
   function knex(tableName) {
     var builder = new KnexBuilder(engine)
     if (!tableName) {
@@ -77,8 +86,8 @@ function makeKnex(engine) {
 
     engine,
 
-    toString() {
-      return `[object Knex:${engine.dialect}]`
+    Builder() {
+      return new KnexBuilder(engine)
     },
 
     transaction(container) {
@@ -86,7 +95,7 @@ function makeKnex(engine) {
     },
 
     raw(sql, bindings) {
-      return new Raw(engine).set(sql, bindings)
+      return new KnexRaw(engine).set(...arguments)
     },
 
     destroy(cb) {
@@ -95,46 +104,53 @@ function makeKnex(engine) {
 
     multi(statements, options) {
       return engine.multi(statements, options)
-    },
-
-    get seed() {
-      return new Seeder(engine)
-    },
-
-    get schema() {
-      return new SchemaBuilder(engine)
-    },
-
-    get migrate() {
-      return new Migrator(engine)
-    },
-
-    get client() {
-      deprecate('knex.client', 'knex.engine')
-      return engine
-    },
-
-    get fn() {
-      deprecate('knex.fn.*', 'Knex.sql.*')
-      return Knex.sql
-    },
-
-    get __knex__() {
-      return Knex.VERSION
-    },
-
-    get VERSION() {
-      return Knex.VERSION
     }
 
   })
 
-  // Most of the standard sql functions may be used to kick off 
-  // a query chain.
-  Object.keys(sql).forEach(method => {
-    knex[method] = () => {
-      var builder = new Builder(engine)
-      return builder[method].apply(builder, arguments);
+  Object.defineProperties(knex, {
+
+    seed: {
+      get() { return new Seeder(engine) }
+    },
+
+    schema: {
+      get() { return new SchemaBuilder(engine) }
+    },
+
+    migrate: {
+      get() { return new Migrator(engine) }
+    },
+
+    client: {
+      get() { 
+        deprecate('knex.client', 'knex.engine')
+        return engine
+      }
+    },
+
+    fn: {
+      get() { 
+        deprecate('knex.fn.*', 'Knex.sql.*') 
+        return Knex.sql
+      }
+    },
+
+    __knex__: {
+      get() { return Knex.VERSION }
+    },
+
+    VERSION: {
+      get() { return Knex.VERSION }
+    }
+
+  })
+
+  Object.getOwnPropertyNames(BaseBuilder.prototype).forEach((method) => {
+    if (Object.prototype.hasOwnProperty(method)) return
+    knex[method] = function() {
+      var builder = new KnexBuilder(engine)
+      return builder[method].apply(builder, arguments)
     }
   })
 

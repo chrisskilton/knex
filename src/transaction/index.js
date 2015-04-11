@@ -1,7 +1,7 @@
 
 // Transaction
 // -------
-var Promise = require('./promise');
+import Promise from '../promise'
 import {EventEmitter} from 'events'
 
 // Creates a new wrapper object for constructing a transaction.
@@ -11,6 +11,7 @@ import {EventEmitter} from 'events'
 export default class Transaction extends EventEmitter {
   
   constructor(transactor) {
+    super()
     this.transactor = transactor
   }
 
@@ -70,10 +71,6 @@ export default class Transaction extends EventEmitter {
     // Return the promise for the entire transaction.
     return dfd.promise;
   }
-
-  // Allow the `Transaction` object to be utilized with full access to the relevant
-  // promise API.
-  require('./interface')(Transaction);
 
   // Passed a `container` function, this method runs the current
   // transaction, returning a promise.

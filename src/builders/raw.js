@@ -1,13 +1,22 @@
 // Raw
 // -------
-import {AbstractBuilder}   from './abstract'
-import {raw}               from '../sql'
-import {iterSymbol}        from 'transduce'
+import {iterSymbol, iterator} from 'transduce'
+import {AbstractBuilder}      from './abstract'
+import {raw}                  from '../sql'
+import {mixin}                from '../helpers'
+import {IRunnable, IIterable} from '../interfaces'
+import {HookContainer}        from '../containers/hooks'
 
 export class RawBuilder extends AbstractBuilder {
-  
-  set(sql, bindings) {
-    this.sql = raw(sql, bindings)
+
+  constructor(engine) {
+    super(engine)
+    this.hooks = new HookContainer()
+  }
+
+  set() {
+    this.raw = raw(...arguments)
+    return this
   }
 
   // Wraps the current sql with `before` and `after`.
@@ -17,8 +26,10 @@ export class RawBuilder extends AbstractBuilder {
     return this
   }
 
-  [iterSymbol]() {
-    return [this.prefix, this.sql, this.suffix]
+  __iterator() {
+    return iterator([this.prefix, iterator(this.raw), this.suffix])
   }
 
 }
+mixin(RawBuilder, IIterable)
+mixin(RawBuilder, IRunnable)

@@ -1,4 +1,5 @@
 // All of the chainable methods specific to "select"
+import {extractAlias} from '../helpers'
 
 export const ISelect = {
 
@@ -33,7 +34,7 @@ export const ISelect = {
 
   // Adds a `distinct` clause to the query.
   distinct(...args) {
-    return this.__clause('columns', distinct(args))
+    return this.__clause('distinct', true).select(...args)
   },
 
   // JOIN(s)

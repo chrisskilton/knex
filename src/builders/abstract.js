@@ -1,33 +1,18 @@
-import forEach from 'lodash/collection/forEach'
-import isArray from 'lodash/lang/isArray'
-import {into}  from 'transduce'
-import TokenContainer from '../container'
+import {not, or} from '../helpers'
+import TokenContainer from '../containers/token'
 import {EventEmitter} from 'events'
 
 export class AbstractBuilder extends EventEmitter {
 
   constructor(engine) {
     super()
-    this.engine    = engine
-    this.container = new TokenContainer()
+    this.engine     = engine
+    this.container  = new TokenContainer()
 
     // Internal flags used in the builder.
     this.__boolFlag = false  // false === and, true === or
     this.__notFlag  = false  // true  === not
     this.__cache    = false
-  }
-
-  compile() {
-    if (this._promise) {
-      warn(`Future versions of Knex will use .then properly to make an A+ compliant promise`)
-    }
-    if (this.__cache) return this.__cache
-    this.__cache = []
-
-    for (var item of this.elements) {
-      this.__cache.push(item)
-    }
-    return this.__cache
   }
 
   // A few getters to make the chain look nice:
@@ -50,6 +35,15 @@ export class AbstractBuilder extends EventEmitter {
   toJS() {
     return this.container.toJS()
   }
+
+  fromJS(obj) {
+    const keys = Object.keys(obj)
+    forEach(keys, (key) => {
+      let val = obj[key]
+      Array.isArray(val) ? this[key].apply(this, val) : this[key](val)
+    })
+    return this
+  }  
 
   __clause(type, element) {
     
@@ -76,11 +70,10 @@ export class AbstractBuilder extends EventEmitter {
     return this
   }
 
-  // Deprecated:
+  // Deprecated: ??
 
   // Create a shallow clone of the current query builder.
   clone() {
-    console.log('Builder.clone is deprecated, you can now compose queries using the knex.sql functions')
     var cloned = new this.constructor()
     cloned._method      = this._method
     cloned._transacting = this._transacting

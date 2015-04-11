@@ -1,4 +1,6 @@
-import _        from 'lodash'
+import assign   from 'lodash/object/assign'
+import pluck    from 'lodash/collection/pluck'
+
 import Promise  from '../../promise'
 import Runner   from '../../runner'
 import helpers  from '../../helpers'
@@ -22,7 +24,7 @@ export default class Runner_MySQL extends BaseRunner {
   _query(obj) {
     var sql = obj.sql
     if (this.isDebugging()) this.debug(obj)
-    if (obj.options) sql = _.extend({sql: sql}, obj.options)
+    if (obj.options) sql = extend({sql: sql}, obj.options)
     var connection = this.connection
     if (!sql) throw new Error('The query is empty')
     return new Promise(function(resolver, rejecter) {
@@ -44,7 +46,7 @@ export default class Runner_MySQL extends BaseRunner {
       case 'pluck':
       case 'first':
         var resp = helpers.skim(rows)
-        if (method === 'pluck') return _.pluck(resp, obj.pluck)
+        if (method === 'pluck') return pluck(resp, obj.pluck)
         return method === 'first' ? resp[0] : resp
       case 'insert':
         return [rows.insertId]

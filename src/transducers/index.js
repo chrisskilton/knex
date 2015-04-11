@@ -1,1 +1,0 @@
-export * from './drop-first-clause'

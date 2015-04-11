@@ -2,12 +2,10 @@
 class TransactionEngine extends Engine {
 
   constructor(engine) {
-    this.engine = engine
-
+    super(engine)
     this.addHook('compile:select', () => {
       return 
     })
-
     // Connection is acquired before transaction starts.
     this.__connection = undefined
   }

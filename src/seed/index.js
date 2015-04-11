@@ -3,9 +3,15 @@
 // -------
 var fs       = require('fs')
 var path     = require('path')
-var _        = require('lodash')
 var mkdirp   = require('mkdirp')
 var Promise  = require('../promise')
+
+import filter from 'lodash/collection/filter'
+import contains from 'lodash/collection/contains'
+import isFunction from 'lodash/lang/isFunction'
+import template from 'lodash/string/template'
+import each from 'lodash/collection/each'
+import assign from 'lodash/object/assign'
 
 // The new seeds we're performing, typically called from the `knex.seed`
 // interface on the main `knex` object. Passes the `knex` instance performing
@@ -45,9 +51,9 @@ function listAll(config) {
   return Promise.promisify(fs.readdir, fs)(this._absoluteConfigDir())
     .bind(this)
     .then(function(seeds) {
-      return _.filter(seeds, function(value) {
+      return filter(seeds, function(value) {
         var extension = path.extname(value);
-        return _.contains(['.co', '.coffee', '.iced', '.js', '.litcoffee', '.ls'], extension);
+        return contains(['.co', '.coffee', '.iced', '.js', '.litcoffee', '.ls'], extension);
       }).sort();
     });
 }
@@ -78,7 +84,7 @@ function runSeeds(seeds) {
 // Validates seed files by requiring and checking for a `seed` function.
 function validateSeedStructure(name) {
   var seed = require(path.join(this._absoluteConfigDir(), name));
-  if (!_.isFunction(seed.seed)) {
+  if (!isFunction(seed.seed)) {
     throw new Error('Invalid seed file: ' + name + ' must have a seed function');
   }
   return name;
@@ -88,7 +94,7 @@ function validateSeedStructure(name) {
 function generateStubTemplate() {
   var stubPath = this.config.stub || path.join(__dirname, 'stub', this.config.extension + '.stub');
   return Promise.promisify(fs.readFile, fs)(stubPath).then(function(stub) {
-    return _.template(stub.toString(), null, {variable: 'd'});
+    return template(stub.toString(), null, {variable: 'd'});
   });
 }
 
@@ -113,7 +119,7 @@ function waterfallBatch(seeds) {
   var seedDirectory = this._absoluteConfigDir();
   var current   = Promise.bind({failed: false, failedOn: 0});
   var log       = [];
-  _.each(seeds, function(seed) {
+  each(seeds, function(seed) {
     var name  = path.join(seedDirectory, seed);
     seed = require(name);
 
@@ -133,7 +139,7 @@ function absoluteConfigDir() {
 }
 
 function setConfig(config) {
-  return _.extend({
+  return assign({
     extension: 'js',
     directory: './seeds'
   }, this.config || {}, config);

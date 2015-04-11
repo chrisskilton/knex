@@ -1,6 +1,10 @@
 import {isPlainObject, isArray, isBoolean, isString} from 'lodash/lang'
-import {or, not, raw} from '../helpers'
-import {map, into, isIterable}    from 'transduce'
+import {or, not, parameterize} from '../helpers'
+import {wrap} from '../sql/wrap'
+import {raw} from '../sql'
+import {and} from '../sql/operators'
+import {bool} from '../sql/types'
+import {map, filter, interpose, into, compose, lazySeq, isIterable, iterator} from 'transduce'
 import * as Builders  from '../builders/query'
 
 export const IWhere = {
@@ -121,9 +125,8 @@ export const IWhere = {
 
 }
 
-import {OR, AND, WHERE, IN, BETWEEN} from '../sql/keywords'
-import {identifier as i} from '../sql/identifier'
-import {parameter  as p} from '../sql/parameter'
+import {AND, WHERE, IN, COMMA, BETWEEN} from '../sql/keywords'
+import {parameter as p} from '../sql'
 
 class WhereClause {
   
@@ -158,18 +161,14 @@ function whereArity1(value) {
   if (isPlainObject(value)) {
     return into([], map(([key, val]) => whereArity3(key, '=', val)), value)
   }
-  if (isClause(value)) {
-    return new WhereClause(value)
-  }
-  if (isFunction(value)) {
-    return new WhereClause(wrap(builder(value)))
-  }
   if (isBoolean(value)) {
-    return new WhereClause(wrap(bool(value)))
+    return new WhereClause(1, '=', value === true ? 1 : 0)
   }
   if (isString(value)) {
     throw new Error('A string value is not supported as a where clause')
   }
+  // TODO: Continue to refine.
+  return new WhereClause(value)
 }
 
 function whereArity2(column, value) {
@@ -183,9 +182,9 @@ function whereArity3(column, operator, value) {
   if (typeof value === 'function') {
     var qb  = new SubQueryBuilder()
     var out = value.call(qb, qb)
-    if (typeof out.compile === 'function' && typeof out !== 'function') {
-      return whereArity3(column, operator, out)
-    }
+    // if (typeof out.compile === 'function' && typeof out !== 'function') {
+    //   return whereArity3(column, operator, out)
+    // }
     return whereArity3(column, operator, qb)
   }
   return new WhereClause(column, operator, value)
@@ -195,31 +194,33 @@ function whereBetween(col, values) {
   if (!isArray(values) || values.length !== 2) {
     throw new TypeError('You must specify a two value array to the whereBetween clause')
   }
-  return new WhereClause(col, BETWEEN, and(values[0], values[1]))
+  return new WhereClause(col, BETWEEN, iterator([p(values[0]), AND, p(values[1])]))
 }
 
 function whereExists(fn) {
   if (typeof fn === 'function') {
 
-  }
-  if (fn && typeof fn.compile === 'function') {
+  } else if (isBuilder(fn)) {
 
   }
-  return new WhereClause(exists(value), column)
+  return new WhereClause(undefined, EXISTS, fn)
 }
+
+var pipeline = compose(
+  map((value) => p(value)),
+  filter((value) => value !== undefined),
+  interpose(COMMA)
+)
 
 function whereIn(col, value) {
   if (typeof value === 'function') {
-    value = subQuery(value)
+    return new WhereClause(col, IN, subQuery(value))
   }
-  if (isArray(value) && isArray(value[0])) {
-    // TODO: Multi where in...
-  }
-  return where(col, IN, value)
+  return new WhereClause(col, IN, wrap(parameterize(value)))
 }
 
 function whereNull(col, value) {
-  return where(col, IS, NULL)
+  return new WhereClause(col, IS, NULL)
 }
 
 // multiWhereIn(statement) {

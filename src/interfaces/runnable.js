@@ -1,5 +1,18 @@
+import {reduce, iterator} from 'transduce'
 
 export const IRunnable = {
+
+  addHook(name, fn) {
+    this.hooks.addHook(name, fn)
+    return this
+  },
+
+  addHooks(obj) {
+    for (let [k, v] of iterator(obj)) {
+      this.addHook(k, v)
+    }
+    return this
+  },
 
   transacting(trx) {
     this._transacting = trx
@@ -8,11 +21,6 @@ export const IRunnable = {
 
   debug(bool = true) {
     return clauses(this, modifier('debug', bool), true)
-  },
-
-  addHook(location, fn) {
-    this.elements.addHook(location, fn)
-    return this
   },
 
   options(opts) {
@@ -102,9 +110,9 @@ export const IRunnable = {
     return this.then().asCallback(cb)
   },
 
-  nodeify() {
-    deprecated('Knex: .nodeify is deprecated, please use .asCallback')
-
+  nodeify(cb) {
+    deprecate('nodeify', 'asCallback')
+    return this.asCallback(cb)
   },
 
   // Streams:
@@ -114,7 +122,11 @@ export const IRunnable = {
   },
 
   toString() {
-    return this.toQuery()
+    var str = ''
+    for (let val of this) {
+      str += val
+    }
+    return str
   },
 
   pipe() {
@@ -127,9 +139,9 @@ export const IRunnable = {
 
   toSQL() {
     if (!this.engine) {
-      throw new Error('toSQL cannot be called on a builder chain without an "engine" specified.')
+      throw new Error('.toSQL cannot be run without an "engine')
     }
-    return this.engine.dialect.builderToSQL(this)
+    return this.engine.builderToSQL(this)
   }
 
 }

@@ -3,16 +3,12 @@ import {AbstractBuilder} from './abstract'
 class SchemaBuilder extends AbstractBuilder {
   
   constructor(engine) {
-    this.engine    = engine
+    super(engine)
     this._sequence = []
   }
 
   toString() {
-    return this.toSQL()
-  }
-
-  toSQL() {
-    return compiler()
+    
   }
 
   createTable(tableName, fn) {

@@ -29,7 +29,7 @@ AlterMethods.dropColumns = function() {
   this._statements.push({
     grouping: 'alterTable',
     method: 'dropColumn',
-    args: _.toArray(arguments)
+    args: Array.toArray(arguments)
   });
   return this;
 };
@@ -68,7 +68,7 @@ _.each([
     this._statements.push({
       grouping: 'alterTable',
       method: method,
-      args: _.toArray(arguments)
+      args: Array.toArray(arguments)
     });
     return this;
   };
@@ -157,7 +157,7 @@ var columnTypes = [
 // with which we can add indexes, etc.
 _.each(columnTypes, function(type) {
   TableBuilder.prototype[type] = function() {
-    var args = _.toArray(arguments);
+    var args = Array.toArray(arguments);
 
     // The "timestamps" call is really a compound call to set the
     // `created_at` and `updated_at` columns.

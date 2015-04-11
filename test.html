@@ -5,14 +5,16 @@
 <body>
   <script src="/knex.build.js" type="text/javascript" charset="utf-8"></script>
   <script>
-    var builder = new Knex.Builder()
-    var x = builder.select('name', 'age').from('accounts')
+    var knex = Knex({dialect: 'mysql'})
+    var x = knex.select('name as age', function(qb) {
+      qb.select('*').from('accounts')
+    })
+      .from('accounts')
       .where('id', 1)
       .orWhere({id: 2})
       .where(function() {
         this.where('id', 1)
       })
-    var y = x[Symbol.iterator]()
   </script>
 </body>
 </html>
