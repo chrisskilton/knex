@@ -15,6 +15,11 @@ export class HookContainer {
     return this
   }
 
+  removeHook(name) {
+    this.hooks.delete(name)
+    return this
+  }
+
   has(name) {
     return this.hooks.has(name)
   }

@@ -43,7 +43,7 @@ export default function BuilderTests(QueryBuilder, clientName, aliasName) {
   }
 
   function testquery(func, res) {
-    var queryRes = func.toString();
+    var queryRes = func.toString()
     var checkValue = res[clientName] || res[aliasName] || res['default'];
 
     if (!checkValue) {
@@ -381,13 +381,14 @@ export default function BuilderTests(QueryBuilder, clientName, aliasName) {
     // });
 
     it('should allow a function as the first argument, for a grouped where clause', function() {
+      
       var partial = qb().table('test').where('id', '=', 1);
       testsql(partial, {
         mysql: 'select * from `test` where `id` = ?',
         default: 'select * from "test" where "id" = ?'
       });
 
-      var subWhere = function (sql) {
+      var subWhere = function(sql) {
         expect(this).to.equal(sql);
         this.where({id: 3}).orWhere('id', 4);
       };
@@ -405,7 +406,7 @@ export default function BuilderTests(QueryBuilder, clientName, aliasName) {
     });
 
     it('should accept a function as the "value", for a sub select', function() {
-      var chain = qb().where('id', '=', function(qb) {
+      var chain = qb().from('foo').where('id', '=', function(qb) {
         expect(this).to.equal(qb);
         this.select('account_id').from('names').where('names.id', '>', 1).orWhere(function() {
           this.where('names.first_name', 'like', 'Tim%').andWhere('names.id', '>', 10);
@@ -414,24 +415,24 @@ export default function BuilderTests(QueryBuilder, clientName, aliasName) {
 
       testsql(chain, {
         mysql: {
-          sql: 'select * where `id` = (select `account_id` from `names` where `names`.`id` > ? or (`names`.`first_name` like ? and `names`.`id` > ?))',
+          sql: 'select * from `foo` where `id` = (select `account_id` from `names` where `names`.`id` > ? or (`names`.`first_name` like ? and `names`.`id` > ?))',
           bindings: [1, 'Tim%', 10]
         },
         default: {
-          sql: 'select * where "id" = (select "account_id" from "names" where "names"."id" > ? or ("names"."first_name" like ? and "names"."id" > ?))',
+          sql: 'select * from `foo` where "id" = (select "account_id" from "names" where "names"."id" > ? or ("names"."first_name" like ? and "names"."id" > ?))',
           bindings: [1, 'Tim%', 10]
         }
       });
 
       testquery(chain, {
-        mysql: 'select * where `id` = (select `account_id` from `names` where `names`.`id` > 1 or (`names`.`first_name` like \'Tim%\' and `names`.`id` > 10))',
-        postgres: 'select * where "id" = (select "account_id" from "names" where "names"."id" > \'1\' or ("names"."first_name" like \'Tim%\' and "names"."id" > \'10\'))',
-        default: 'select * where "id" = (select "account_id" from "names" where "names"."id" > 1 or ("names"."first_name" like \'Tim%\' and "names"."id" > 10))'
+        mysql: 'select * from `foo` where `id` = (select `account_id` from `names` where `names`.`id` > 1 or (`names`.`first_name` like \'Tim%\' and `names`.`id` > 10))',
+        postgres: 'select * from "foo" where "id" = (select "account_id" from "names" where "names"."id" > \'1\' or ("names"."first_name" like \'Tim%\' and "names"."id" > \'10\'))',
+        default: 'select * from "foo" where "id" = (select "account_id" from "names" where "names"."id" > 1 or ("names"."first_name" like \'Tim%\' and "names"."id" > 10))'
       });
     });
 
     it('should accept a function as the "value", for a sub select when chained', function() {
-      var chain = qb().where('id', '=', function(qb) {
+      var chain = qb().from('foo').where('id', '=', function(qb) {
         expect(this).to.equal(qb);
         this.select('account_id').from('names').where('names.id', '>', 1).or.where(function() {
           this.where('names.first_name', 'like', 'Tim%').and.where('names.id', '>', 10);
@@ -440,27 +441,27 @@ export default function BuilderTests(QueryBuilder, clientName, aliasName) {
 
       testsql(chain, {
         mysql: {
-          sql: 'select * where `id` = (select `account_id` from `names` where `names`.`id` > ? or (`names`.`first_name` like ? and `names`.`id` > ?))',
+          sql: 'select * from `foo` where `id` = (select `account_id` from `names` where `names`.`id` > ? or (`names`.`first_name` like ? and `names`.`id` > ?))',
           bindings: [1, 'Tim%', 10]
         },
         default: {
-          sql: 'select * where "id" = (select "account_id" from "names" where "names"."id" > ? or ("names"."first_name" like ? and "names"."id" > ?))',
+          sql: 'select * from "foo" where "id" = (select "account_id" from "names" where "names"."id" > ? or ("names"."first_name" like ? and "names"."id" > ?))',
           bindings: [1, 'Tim%', 10]
         }
       });
     });
 
     it('should not do whereNull on where("foo", "<>", null) #76', function() {
-      testquery(qb().where('foo', '<>', null), {
-        mysql: 'select * where `foo` <> NULL',
-        default: 'select * where "foo" <> NULL'
+      testquery(qb().from('foo').where('foo', '<>', null), {
+        mysql: 'select * from `foo` where `foo` <> NULL',
+        default: 'select * from "foo" where "foo" <> NULL'
       });
     });
 
     it('should expand where("foo", "!=") to - where id = "!="', function() {
-      testquery(qb().where('foo', '!='), {
-        mysql: 'select * where `foo` = \'!=\'',
-        default: 'select * where "foo" = \'!=\''
+      testquery(qb().from('foo').where('foo', '!='), {
+        mysql: 'select * from `foo` where `foo` = \'!=\'',
+        default: 'select * from "foo" where "foo" = \'!=\''
       });
     });
 
@@ -494,14 +495,16 @@ export default function BuilderTests(QueryBuilder, clientName, aliasName) {
           bindings: [1, 2, 3]
         }
       });
+    })
 
+    it('array of unions', () => {
       var arrayChain = qb().select('*').from('users').where({id: 1}).union([
         function() {
           this.select('*').from('users').where({id: 2});
         }, function() {
           this.select('*').from('users').where({id: 3});
         }
-      ]);
+      ])
       testsql(arrayChain, {
         mysql: {
           sql: 'select * from `users` where `id` = ? union select * from `users` where `id` = ? union select * from `users` where `id` = ?',
@@ -511,61 +514,61 @@ export default function BuilderTests(QueryBuilder, clientName, aliasName) {
           sql: 'select * from "users" where "id" = ? union select * from "users" where "id" = ? union select * from "users" where "id" = ?',
           bindings: [1, 2, 3]
         }
-      });
-    });
+      })
+    })
 
-    it("wraps unions", function() {
-      var wrappedChain = qb().select('*').from('users').where('id', 'in', function() {
-        this.table('users').max("id").union(function() {
-          this.table('users').min("id");
-        }, true);
-      });
-      testsql(wrappedChain, {
-        mysql: {
-          sql: 'select * from `users` where `id` in (select max(`id`) from `users` union (select min(`id`) from `users`))',
-          bindings: []
-        },
-        default: {
-          sql: 'select * from "users" where "id" in (select max("id") from "users" union (select min("id") from "users"))',
-          bindings: []
-        }
-      });
+    // it("wraps unions", function() {
+    //   var wrappedChain = qb().select('*').from('users').where('id', 'in', function() {
+    //     this.table('users').max("id").union(function() {
+    //       this.table('users').min("id");
+    //     }, true);
+    //   });
+    //   testsql(wrappedChain, {
+    //     mysql: {
+    //       sql: 'select * from `users` where `id` in (select max(`id`) from `users` union (select min(`id`) from `users`))',
+    //       bindings: []
+    //     },
+    //     default: {
+    //       sql: 'select * from "users" where "id" in (select max("id") from "users" union (select min("id") from "users"))',
+    //       bindings: []
+    //     }
+    //   });
 
-      // worthwhile since we're playing games with the 'wrap' specification with arguments
-      var multipleArgumentsWrappedChain = qb().select('*').from('users').where({id: 1}).union(function() {
-        this.select('*').from('users').where({id: 2});
-      }, function() {
-        this.select('*').from('users').where({id: 3});
-      }, true);
-      testsql(multipleArgumentsWrappedChain, {
-        mysql: {
-          sql: 'select * from `users` where `id` = ? union (select * from `users` where `id` = ?) union (select * from `users` where `id` = ?)',
-          bindings: [1, 2, 3]
-        },
-        default: {
-          sql: 'select * from "users" where "id" = ? union (select * from "users" where "id" = ?) union (select * from "users" where "id" = ?)',
-          bindings: [1, 2, 3]
-        }
-      });
+    //   // worthwhile since we're playing games with the 'wrap' specification with arguments
+    //   var multipleArgumentsWrappedChain = qb().select('*').from('users').where({id: 1}).union(function() {
+    //     this.select('*').from('users').where({id: 2});
+    //   }, function() {
+    //     this.select('*').from('users').where({id: 3});
+    //   }, true);
+    //   testsql(multipleArgumentsWrappedChain, {
+    //     mysql: {
+    //       sql: 'select * from `users` where `id` = ? union (select * from `users` where `id` = ?) union (select * from `users` where `id` = ?)',
+    //       bindings: [1, 2, 3]
+    //     },
+    //     default: {
+    //       sql: 'select * from "users" where "id" = ? union (select * from "users" where "id" = ?) union (select * from "users" where "id" = ?)',
+    //       bindings: [1, 2, 3]
+    //     }
+    //   });
 
-      var arrayWrappedChain = qb().select('*').from('users').where({id: 1}).union([
-        function() {
-          this.select('*').from('users').where({id: 2});
-        }, function() {
-          this.select('*').from('users').where({id: 3});
-        }
-      ], true);
-      testsql(arrayWrappedChain, {
-        mysql: {
-          sql: 'select * from `users` where `id` = ? union (select * from `users` where `id` = ?) union (select * from `users` where `id` = ?)',
-          bindings: [1, 2, 3]
-        },
-        default: {
-          sql: 'select * from "users" where "id" = ? union (select * from "users" where "id" = ?) union (select * from "users" where "id" = ?)',
-          bindings: [1, 2, 3]
-        }
-      });
-    });
+    //   var arrayWrappedChain = qb().select('*').from('users').where({id: 1}).union([
+    //     function() {
+    //       this.select('*').from('users').where({id: 2});
+    //     }, function() {
+    //       this.select('*').from('users').where({id: 3});
+    //     }
+    //   ], true);
+    //   testsql(arrayWrappedChain, {
+    //     mysql: {
+    //       sql: 'select * from `users` where `id` = ? union (select * from `users` where `id` = ?) union (select * from `users` where `id` = ?)',
+    //       bindings: [1, 2, 3]
+    //     },
+    //     default: {
+    //       sql: 'select * from "users" where "id" = ? union (select * from "users" where "id" = ?) union (select * from "users" where "id" = ?)',
+    //       bindings: [1, 2, 3]
+    //     }
+    //   });
+    // });
 
     // it("handles grouped mysql unions", function() {
     //   chain = myqb().union(
@@ -791,7 +794,7 @@ export default function BuilderTests(QueryBuilder, clientName, aliasName) {
     });
 
     it("orderByRaw second argument is the binding", function() {
-      testsql(qb().select('*').from('users').orderByRaw('col NULLS LAST ?', 'dEsc'), {
+      testsql(qb().select('*').from('users').orderByRaw('col NULLS LAST ?', ['dEsc']), {
         mysql: {
           sql: 'select * from `users` order by col NULLS LAST ?',
           bindings: ['dEsc']
@@ -825,7 +828,7 @@ export default function BuilderTests(QueryBuilder, clientName, aliasName) {
 
     it("nested having", function() {
       testsql(qb().select('*').from('users').having(function(){
-        this.where('email', '>', 1);
+        this.having('email', '>', 1);
       }), {
         mysql: 'select * from `users` having (`email` > ?)',
         default: 'select * from "users" having ("email" > ?)'
@@ -834,8 +837,8 @@ export default function BuilderTests(QueryBuilder, clientName, aliasName) {
 
     it("nested or havings", function() {
       testsql(qb().select('*').from('users').having(function(){
-        this.where('email', '>', 10);
-        this.orWhere('email', '=', 7);
+        this.having('email', '>', 10);
+        this.orHaving('email', '=', 7);
       }), {
         mysql: 'select * from `users` having (`email` > ? or `email` = ?)',
         default: 'select * from "users" having ("email" > ? or "email" = ?)'

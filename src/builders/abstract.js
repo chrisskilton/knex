@@ -1,6 +1,7 @@
 import {not, or} from '../helpers'
 import TokenContainer from '../containers/token'
 import {EventEmitter} from 'events'
+import forEach from 'lodash/collection/forEach'
 
 export class AbstractBuilder extends EventEmitter {
 
@@ -13,6 +14,7 @@ export class AbstractBuilder extends EventEmitter {
     this.__boolFlag = false  // false === and, true === or
     this.__notFlag  = false  // true  === not
     this.__cache    = false
+    this['@@knex/hook'] = 'builder'
   }
 
   // A few getters to make the chain look nice:
@@ -81,3 +83,4 @@ export class AbstractBuilder extends EventEmitter {
   }
 
 }
+AbstractBuilder.prototype['@@__KNEX_BUILDER__@@'] = true

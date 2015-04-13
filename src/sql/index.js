@@ -1,7 +1,7 @@
 import {iterSymbol, isIterator, iterator, lazySeq, transducer} from 'transduce'
-import {identifier as i} from './identifier'
 import {AS, DISTINCT} from './keywords'
 import {isPlainObject} from 'lodash/lang'
+import {SubQueryBuilder} from '../builders/query'
 
 // ----------------
 
@@ -20,6 +20,25 @@ export function parameter(value) {
 
 // ----------------
 
+class Identifier {
+  constructor(value) {
+    this['@@knex/value'] = value.trim()
+    this['@@knex/hook']  = 'identifier'
+  }
+}
+
+export function identifier(value) {
+  if (typeof value === 'function') {
+    var qb  = new SubQueryBuilder()
+    var val = value.call(qb, qb) // TODO: check return val for builders
+    return qb
+  }
+  if (typeof value !== 'string') {
+    return value
+  }
+  return new Identifier(value)
+}
+
 // class Column {
 //   constructor(value) {
 //     this.value    = value
@@ -29,9 +48,9 @@ export function parameter(value) {
 //   }
 //   compile() {
 //     return [
-//       i(this.value),
+//       identifier(this.value),
 //       this.alias ? AS : undefined,
-//       this.alias ? i(this.alias) : undefined
+//       this.alias ? identifier(this.alias) : undefined
 //     ]
 //   }
 // }
@@ -54,7 +73,7 @@ class Fn {
     this.params = params
   }
   [iterSymbol]() {
-    return [`${fnName}(`, i(this.params), `)`]
+    return [`${fnName}(`, identifier(this.params), `)`]
   }
 }
 export function fn(fnName, ...params) {
@@ -106,6 +125,7 @@ class RawClause {
   constructor(sql, bindings) {
     this.sql      = sql
     this.bindings = bindings
+    this['@@knex/hook'] = 'clause:raw'
   }
   [iterSymbol]() {
     if (typeof this.sql === 'string') {
@@ -113,7 +133,7 @@ class RawClause {
         return compileRaw(this.sql, this.bindings)
       }
     }
-    return iterator(this.sql)
+    return iterator([this.sql])
   }
 }
 

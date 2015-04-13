@@ -1,9 +1,7 @@
 import {isNull, isArray, isString, isNumber} from 'lodash/lang'
 
-import {QueryIterable}  from '../iterables/query'
-import {InsertIterable} from '../iterables/insert'
-import {DeleteIterable} from '../iterables/delete'
-import {UpdateIterable} from '../iterables/update'
+import {QueryIterable, InsertIterable, 
+  DeleteIterable, UpdateIterable} from '../iterables'
 import camelCase        from 'lodash/string/camelCase'
 
 import {isIterable, isIterator, filter, iterSymbol, lazySeq, interpose, 
@@ -36,10 +34,6 @@ function compileTarget(container) {
     case 'insert': return new InsertIterable(container)
   }
 }
-
-const COMPLETED = {}
-const DONE      = {done: true,  value: undefined}
-const SPACE     = {done: false, value: ' '}
 
 // The root seq takes a "transducer",
 // and returns a lazy iterator.

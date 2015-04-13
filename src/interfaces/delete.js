@@ -19,7 +19,7 @@ export var IDelete = {
   },
 
   from(...args) {
-    return this.__clause('from', args)    
+    return this.__clause('table', args)
   }
 
 }

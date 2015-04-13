@@ -1,5 +1,10 @@
 // All of the chainable methods specific to "select"
-import {extractAlias} from '../helpers'
+import {isBuilder, extractAlias, wrap} from '../helpers'
+import {OrderByClause, UnionClause} from '../iterables'
+import {UnionQueryBuilder} from '../builders/query'
+import {isBoolean} from 'lodash/lang'
+import last from 'lodash/array/last'
+import {raw} from '../sql'
 
 export const ISelect = {
 
@@ -19,17 +24,14 @@ export const ISelect = {
   },
 
   from(...args) {
-    return this.__clause('from', args)
+    return this.__clause('table', args)
   },
 
   // Sets the `tableName` on the query.
   // Alias to "from" for select and "into" for insert clauses
   // e.g. builder.insert({a: value}).into('tableName')
-  table(tableName) {
-    var [tbl, aliased] = extractAlias(tableName)
-    tbl = table(tbl)
-    if (aliased) tbl = aliasAs(tbl, aliased)
-    return this.__clause('table', tbl)
+  table(...args) {
+    return this.__clause('table', args)
   },
 
   // Adds a `distinct` clause to the query.
@@ -40,87 +42,86 @@ export const ISelect = {
   // JOIN(s)
 
   join() {
-    return this.__clause('joins', innerJoin(...arguments))
+    return this.innerJoin(...arguments)
   },
 
-  innerJoin() {
-    return this.__clause('joins', innerJoin(...arguments))
+  innerJoin(...args) {
+    return this.__clause('joins', innerJoin(args))
   },
 
-  leftJoin() {
-    return this.__clause('joins', leftJoin(...arguments))
+  leftJoin(...args) {
+    return this.__clause('joins', leftJoin(args))
   },
 
-  leftOuterJoin() {
-    return this.__clause('joins', leftOuterJoin(...arguments))
+  leftOuterJoin(...args) {
+    return this.__clause('joins', leftOuterJoin(args))
   },
 
-  rightJoin() {
-    return this.__clause('joins', rightJoin(...arguments))
+  rightJoin(...args) {
+    return this.__clause('joins', rightJoin(args))
   },
 
-  rightOuterJoin() {
-    return this.__clause('joins', rightOuterJoin(...arguments))
+  rightOuterJoin(...args) {
+    return this.__clause('joins', rightOuterJoin(args))
   },
 
-  outerJoin() {
-    return this.__clause('joins', outerJoin(...arguments))
+  outerJoin(...args) {
+    return this.__clause('joins', outerJoin(args))
   },
 
-  fullOuterJoin() {
-    return this.__clause('joins', fullOuterJoin(...arguments))
+  fullOuterJoin(...args) {
+    return this.__clause('joins', fullOuterJoin(args))
   },
 
-  crossJoin() {
-    return this.__clause('joins', crossJoin(...arguments))
+  crossJoin(...args) {
+    return this.__clause('joins', crossJoin(args))
   },
 
-  joinRaw() {
-    return this.__clause('joins', joinRaw(...arguments))
+  joinRaw(...args) {
+    return this.__clause('joins', joinRaw(args))
   },
 
   // GROUP BY ${col}
 
-  groupBy(item) {
-    return this.__clause(groupBy(item))
+  groupBy(...args) {
+    return this.__clause('groupings', args)
   },
 
-  groupByRaw(sql, bindings) {
-    return this.__clause(groupBy(raw(sql, bindings)))
+  groupByRaw() {
+    return this.__clause('groupings', raw(...arguments))
   },
 
   // ORDER BY ${col}
 
   orderBy(column, direction) {
-    return this.__clause('orderings', [column, direction])
+    if (!Array.isArray(column)) return this.orderBy([column], direction)
+    return this.__clause('orderings', new OrderByClause(column, direction))
   },
 
-  orderByRaw(sql, bindings) {
-    return this.__clause('orderings', raw(sql, bindings))
+  orderByRaw() {
+    return this.__clause('orderings', raw(...arguments))
   },
 
   // UNION [ALL] ${col}
 
-  union(value, wrap) {
-    if (wrap) return this.__clause(wrap(union(value)))
-    return this.__clause(union(value))
+  union(...args) {
+    return this.__clause('unions', unionDispatch(args))
   },
 
-  unionAll(value, wrap) {
-    if (wrap) return this.__clause(wrap(unionAll(value)))
-    return this.__clause(unionAll(value))
+  unionAll(...args) {
+    return this.__clause('unions', unionDispatch(args, true))
   },
 
   // LIMIT ${n}
 
   limit(value) {
-    return this.__clause(limit(value))
+    return this.__clause('limit', value)
   },
 
   // OFFSET ${n}
 
   offset(value) {
-    return this.__clause(offset(value))
+    return this.__clause('offset', value)
   },
 
   // aggregates:
@@ -159,7 +160,7 @@ export const ISelect = {
 
   first() {
     // onBeforeBuild -> order by, limit ??
-    return this.addHook('onResult', (rows) => rows && rows[0])
+    return this.limit(1).addHook('onResult', (rows) => rows && rows[0])
   },
 
   pluck(column) {
@@ -229,4 +230,31 @@ export function crossJoin(args) {
 
 export function joinRaw(sql, bindings) {
   return new RawExpression('joins', sql, bindings)
+}
+
+function unionDispatch(args, all = false) {
+  if (Array.isArray(args[0])) {
+    return unionDispatch([...args[0], args[1]], all)
+  }
+  var unions    = []
+  var isWrapped = isBoolean(last(args)) ? last(args) : false
+  for (let u of args) {
+    if (typeof u === 'function' || isBuilder(u)) {
+      unions.push(union(u, all, isWrapped))
+    }
+  }
+  return unions
+}
+
+function union(obj, all, wrapped) {
+  if (typeof obj === 'function') {
+    var qb = new UnionQueryBuilder()
+    obj.call(qb, qb)
+    return new UnionClause(qb, wrapped, all)
+  }
+  else if (isBuilder(obj)) {
+    var qb = new UnionQueryBuilder()
+    qb.container = obj.container // TODO: Robustify this...
+    return new UnionClause(qb, wrapped, all)
+  }
 }

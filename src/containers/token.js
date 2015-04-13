@@ -1,3 +1,4 @@
+import each   from 'lodash/collection/each'
 import last   from 'lodash/array/last'
 import {into} from 'transduce'
 
@@ -19,10 +20,14 @@ export default class TokenContainer {
   }
 
   add(key, value) {
-    if (!this.has(key)) {
-      this.tokens.set(key, [])
+    if (Array.isArray(value)) {
+      each(value, (val) => this.add(key, val))
+    } else {
+      if (!this.has(key)) {
+        this.tokens.set(key, [])
+      }
+      this.tokens.get(key).push(value)      
     }
-    this.tokens.get(key).push(value)
     return this
   }
 

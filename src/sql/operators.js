@@ -1,7 +1,6 @@
 import * as kwd  from './keywords'
 
 import {parameter as p} from './index'
-import {identifier as i} from './identifier'
 
 class Operator {
   get grouping() {
@@ -36,7 +35,7 @@ class ComparisonOperator {
     this.type     = 'ComparisonOperator'
   }
   nodes() {
-    return [i(this.lhs), this.operator, p(this.rhs)]
+    return [identifier(this.lhs), this.operator, p(this.rhs)]
   }
 }
 
@@ -184,11 +183,6 @@ export function rightShift() {
 
 // <<
 export function leftShift() {
-
-}
-
-// IS NULL
-export function isNull() {
 
 }
 

@@ -28,16 +28,21 @@ export default class Engine extends EventEmitter {
     if (builder.__cache) {
       return builder.__cache
     }
-    var bindings = []
-    builder.addHook('beforeSpace', (val) => {
+    var sql = '', bindings = []
+    var beforeSpace = (val) => {
       if (val['@@knex/hook'] === 'parameter') {
         bindings.push(val['@@knex/value'])
         return '?'
       }
       return val
+    }
+    builder.withHook('beforeSpace', beforeSpace, () => {
+      for (var str of builder) {
+        sql += str
+      }
     })
     return {
-      sql: builder.toString(),
+      sql: sql,
       bindings: bindings
     }
   }

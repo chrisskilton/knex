@@ -1,3 +1,5 @@
+import {JOIN, INNER, LEFT, LEFT_OUTER, RIGHT, 
+  RIGHT_OUTER, OUTER, FULL_OUTER, CROSS} from '../sql/keywords'
 
 export const IJoin = {
 
@@ -53,9 +55,6 @@ class JoinExpression {
 
 }
 
-
-import {JOIN, INNER, LEFT, LEFT_OUTER, RIGHT, 
-  RIGHT_OUTER, OUTER, FULL_OUTER, CROSS} from '../sql/keywords'
 
 class JoinClause {
 

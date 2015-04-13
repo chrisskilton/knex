@@ -18,7 +18,6 @@ import DialectEngines from './dialects'
 
 import {isEngine, warn} from './util'
 
-
 function Knex(engineOrConf) {
   if (!isEngine(engineOrConf)) {
     return Knex(makeEngine(engineOrConf))

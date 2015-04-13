@@ -1,4 +1,5 @@
 import {reduce, iterator} from 'transduce'
+import {escapeParam} from '../sql/string'
 
 export const IRunnable = {
 
@@ -7,11 +8,23 @@ export const IRunnable = {
     return this
   },
 
+  removeHook(name) {
+    this.hooks.removeHook(name)
+    return this
+  },
+
   addHooks(obj) {
     for (let [k, v] of iterator(obj)) {
       this.addHook(k, v)
     }
     return this
+  },
+
+  withHook(name, fn, toRun) {
+    this.hooks.addHook(name, fn)
+    var val = toRun()
+    this.hooks.removeHook(name)
+    return val
   },
 
   transacting(trx) {
@@ -122,11 +135,19 @@ export const IRunnable = {
   },
 
   toString() {
-    var str = ''
-    for (let val of this) {
-      str += val
+    var beforeSpace = (val) => {
+      if (val && val['@@knex/hook'] === 'parameter') {
+        return escapeParam(val['@@knex/value'])
+      }
+      return val
     }
-    return str
+    var sql = ''
+    this.withHook('beforeSpace', beforeSpace, () => {
+      for (let val of this) {
+        sql += val
+      }
+    })
+    return sql
   },
 
   pipe() {
@@ -134,7 +155,7 @@ export const IRunnable = {
   },
 
   toQuery() {
-
+    return this.toString()
   },
 
   toSQL() {

@@ -7,8 +7,8 @@ import {HookContainer}        from '../containers/hooks'
 import {ISelect, IWhere, IHaving, IDelete, IUpdate, 
   ITruncate, IColumninfo, IJoin, IRunnable, IIterable} from '../interfaces'
 
-import {SubQueryIterable}     from '../iterables/query'
-import {GroupedWhereIterable} from '../iterables'
+import {GroupedWhereIterable, GroupedHavingIterable, 
+  SubQueryIterable, UnionQueryIterable} from '../iterables'
 
 export class BaseBuilder extends AbstractBuilder {
 
@@ -40,6 +40,12 @@ mixin(SubQueryBuilder, ISelect)
 mixin(SubQueryBuilder, IWhere)
 mixin(SubQueryBuilder, IHaving)
 
+export class UnionQueryBuilder extends SubQueryBuilder {
+  [iterSymbol]() {
+    return iterator(new UnionQueryIterable(this.container))
+  }
+}
+
 export class GroupedWhereBuilder extends AbstractBuilder {
   [iterSymbol]() {
     return iterator(new GroupedWhereIterable(this.container.get('wheres')))
@@ -49,7 +55,7 @@ mixin(GroupedWhereBuilder, IWhere)
 
 export class GroupedHavingBuilder extends AbstractBuilder {
   [iterSymbol]() {
-    return iterator(new GroupedHavingIterable(this))
+    return iterator(new GroupedHavingIterable(this.container.get('havings')))
   }
 }
 mixin(GroupedHavingBuilder, IHaving)

@@ -3,9 +3,11 @@ import {or, not, parameterize} from '../helpers'
 import {wrap} from '../sql/wrap'
 import {raw} from '../sql'
 import {and} from '../sql/operators'
-import {bool} from '../sql/types'
 import {map, filter, interpose, into, compose, lazySeq, isIterable, iterator} from 'transduce'
-import * as Builders  from '../builders/query'
+import {SubQueryBuilder, GroupedWhereBuilder} from '../builders/query'
+import {AND, WHERE, IN, IS, NULL, COMMA, BETWEEN} from '../sql/keywords'
+import {parameter} from '../sql'
+import {WhereClause} from '../iterables'
 
 export const IWhere = {
 
@@ -27,12 +29,12 @@ export const IWhere = {
     return this.__where(or(not(whereDispatch(args))))
   },
 
-  whereRaw(sql, bindings) {
-    return this.__where(raw(sql, bindings))
+  whereRaw() {
+    return this.__where(raw(...arguments))
   },
 
-  orWhereRaw(sql, bindings) {
-    return this.__where(or(raw(sql, bindings)))
+  orWhereRaw() {
+    return this.__where(or(raw(...arguments)))
   },
 
   // [AND | OR] WHERE [NOT] EXISTS (subquery)
@@ -125,22 +127,6 @@ export const IWhere = {
 
 }
 
-import {AND, WHERE, IN, COMMA, BETWEEN} from '../sql/keywords'
-import {parameter as p} from '../sql'
-
-class WhereClause {
-  
-  constructor(column, operator, value) {
-    this.column     = column
-    this.operator   = operator
-    this.value      = value
-    this.grouping   = 'wheres'
-    this.__negated  = false
-    this.__or       = false
-  }
-
-}
-
 function whereDispatch(args) {
   switch (args.length) {
     case 0: return;
@@ -153,10 +139,9 @@ function whereDispatch(args) {
 // e.g. where(raw()), where('col = 2'), where({col: 2, id: 2}), where(fn)
 function whereArity1(value) {
   if (typeof value === 'function') {
-    var w   = new Builders.GroupedWhereBuilder()
-    var out = value.call(w, w)
-    var val = out && isIterable(out) ? out : w
-    return new WhereClause(val)
+    var w = new GroupedWhereBuilder()
+    value.call(w, w)
+    return new WhereClause(w)
   }
   if (isPlainObject(value)) {
     return into([], map(([key, val]) => whereArity3(key, '=', val)), value)
@@ -173,18 +158,15 @@ function whereArity1(value) {
 
 function whereArity2(column, value) {
   if (value === null) {
-    return new WhereClause(isNull(value), column)
+    return whereNull(column)
   }
   return new WhereClause(column, '=', value)
 }
 
 function whereArity3(column, operator, value) {
   if (typeof value === 'function') {
-    var qb  = new SubQueryBuilder()
-    var out = value.call(qb, qb)
-    // if (typeof out.compile === 'function' && typeof out !== 'function') {
-    //   return whereArity3(column, operator, out)
-    // }
+    var qb = new SubQueryBuilder()
+    value.call(qb, qb)
     return whereArity3(column, operator, qb)
   }
   return new WhereClause(column, operator, value)
@@ -194,7 +176,9 @@ function whereBetween(col, values) {
   if (!isArray(values) || values.length !== 2) {
     throw new TypeError('You must specify a two value array to the whereBetween clause')
   }
-  return new WhereClause(col, BETWEEN, iterator([p(values[0]), AND, p(values[1])]))
+  return new WhereClause(col, BETWEEN, iterator([
+    parameter(values[0]), AND, parameter(values[1])
+  ]))
 }
 
 function whereExists(fn) {
@@ -207,14 +191,14 @@ function whereExists(fn) {
 }
 
 var pipeline = compose(
-  map((value) => p(value)),
+  map((value) => parameter(value)),
   filter((value) => value !== undefined),
   interpose(COMMA)
 )
 
 function whereIn(col, value) {
   if (typeof value === 'function') {
-    return new WhereClause(col, IN, subQuery(value))
+    return whereArity3(col, IN, value)
   }
   return new WhereClause(col, IN, wrap(parameterize(value)))
 }

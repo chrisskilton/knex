@@ -1,14 +1,44 @@
 import _       from 'lodash'
-import {filter, interpose, map, compose, iterator, lazySeq, FlattenIterator} from 'transduce'
-import {COMMA} from './sql/delimiters'
+import {protocols, filter, interpose, map, compose, iterator, lazySeq, 
+  Transducer, FlattenIterator} from 'transduce'
+import {COMMA, RIGHT_PAREN, LEFT_PAREN} from './sql/delimiters'
 import {AS} from './sql/keywords'
-import {identifier} from './sql/identifier'
+import {identifier} from './sql'
 import {parameter} from './sql'
+import forEach from 'lodash/collection/forEach'
+
+const {transducer: {step: tStep, result: tResult}} = protocols
 
 export function knexFlatten(transducer, target) {
   return lazySeq(transducer, new FlattenIterator(iterator(target), (val) => {
     return val && val['@@knex/hook']
   }))
+}
+
+export function isBuilder(obj) {
+  return obj && obj['@@__KNEX_BUILDER__@@']
+}
+
+export function isKeyword(val) {
+  return val && val['@@knex/hook'] === 'keyword'
+}
+
+var columnizePipeline = compose(
+  map(extractAlias),
+  map((value) => identifier(value)),
+  filter((value) => value !== undefined),
+  interpose(COMMA)
+)
+
+export function columnize(columns) {
+  return knexFlatten(columnizePipeline, columns)
+}
+
+export function commaDelimit(values) {
+  return lazySeq(compose(
+    filter((value) => value !== undefined),
+    interpose(COMMA)
+  ), values)
 }
 
 function commaSeparated(wrappingValue) {
@@ -18,13 +48,6 @@ function commaSeparated(wrappingValue) {
     filter((value) => value !== undefined),
     interpose(COMMA)
   )
-}
-
-export function columnize(values, shallow) {
-  var pipeline = commaSeparated(identifier)
-  return shallow
-    ? lazySeq(pipeline, values)
-    : knexFlatten(pipeline, values)
 }
 
 export function parameterize(values, shallow) {
@@ -83,35 +106,32 @@ export function extractAlias(val) {
   return val
 }
 
-export function clause(builder, element, single) {
-  
-  builder.__cache = false
-  
-  if (element === undefined) {
-    builder.__notFlag = false
-    builder.__boolFlag = false
-    return builder
-  }
-  
-  if (builder.__notFlag) {
-    builder.__notFlag = false
-    return clause(builder, not(element))
-  }
-  
-  if (builder.__boolFlag) {
-    builder.__boolFlag = false
-    return clause(builder, or(element))
-  }
-  
-  if (single) {
-    builder.elements.single[element.grouping] = element
-  } else if (Array.isArray(element)) {
-    for (let item of element) {
-      builder = clause(builder, item)
-    }
-  } else {
-    builder.elements[element.grouping].push(element)  
+class Wrapping extends Transducer {
+
+  constructor(xf) {
+    super(xf)
+    this.buffered = []
   }
 
-  return builder
+  [tStep](result, value) {
+    this.buffered.push(value)
+    return result
+  }
+
+  [tResult](result) {
+    if (this.buffered.length > 0) {
+      result = this.xfStep(result, LEFT_PAREN)
+      forEach(this.buffered, (val) => {
+        result = this.xfStep(result, val)
+      })
+      result = this.xfStep(result, RIGHT_PAREN)
+    }
+    return this.xfResult(result)
+  }
+
 }
+
+export const wrap = (xf) => {
+  return new Wrapping(xf)
+}
+
