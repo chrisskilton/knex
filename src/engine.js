@@ -25,13 +25,12 @@ export default class Engine extends EventEmitter {
 
   // Converts a "builder" into SQL which is properly parameterized
   builderToSQL(builder) {
-    if (builder.__cache) {
-      return builder.__cache
-    }
-    var sql = '', bindings = []
+    var sql = '', bindings = [], toStr = []
+    if (builder.__cache) return builder.__cache
     var beforeSpace = (val) => {
       if (val['@@knex/hook'] === 'parameter') {
         bindings.push(val['@@knex/value'])
+        toStr.push(val['@@knex/value'])
         return '?'
       }
       return val
@@ -39,12 +38,17 @@ export default class Engine extends EventEmitter {
     builder.withHook('beforeSpace', beforeSpace, () => {
       for (var str of builder) {
         sql += str
+        toStr.push(str)
       }
     })
-    return {
+    builder.__cache = {
       sql: sql,
-      bindings: bindings
+      bindings: bindings,
+      toString() {
+        return toStr.join('')
+      }
     }
+    return builder.__cache
   }
 
   // Acquire a connection from the pool.

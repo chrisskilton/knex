@@ -7,12 +7,12 @@ import camelCase        from 'lodash/string/camelCase'
 import {isIterable, isIterator, filter, iterSymbol, lazySeq, interpose, 
   into, map, Transducer, transducer, iterator, compose, 
   protocols, FlattenIterator
-} from 'transduce'
+} from 'duce'
 
 const {step: tStep, result: tResult} = protocols.transducer
 
 export const IIterable = {
-  [Symbol.iterator]() {
+  [iterSymbol]() {
     return compileFrom(this)
   }
 }

@@ -25,8 +25,8 @@ module.exports = {
     loaders: [
       { 
         test: /\.js$/, 
-        exclude:/node_modules/, 
-        loader: 'babel-loader?loose=all' 
+        exclude:/node_modules|duce/, 
+        loader: 'babel-loader?loose=all&optional=runtime' 
       }
     ]
   },

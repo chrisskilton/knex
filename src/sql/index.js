@@ -1,4 +1,4 @@
-import {iterSymbol, isIterator, iterator, lazySeq, transducer} from 'transduce'
+import {iterSymbol, isIterator, iterator, lazySeq, transducer} from 'duce'
 import {AS, DISTINCT} from './keywords'
 import {isPlainObject} from 'lodash/lang'
 import {SubQueryBuilder} from '../builders/query'

@@ -1,6 +1,6 @@
 import _       from 'lodash'
 import {protocols, filter, interpose, map, compose, iterator, lazySeq, 
-  Transducer, FlattenIterator} from 'transduce'
+  Transducer, FlattenIterator} from 'duce'
 import {COMMA, RIGHT_PAREN, LEFT_PAREN} from './sql/delimiters'
 import {AS} from './sql/keywords'
 import {identifier} from './sql'

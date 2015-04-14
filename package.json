@@ -29,8 +29,9 @@
     "pool2": "^1.0.0",
     "readable-stream": "^1.1.12",
     "tildify": "~1.0.0",
-    "transduce": "tgriesser/transduce.git#6e4b53661006edca7dfa24d0c7c1027ba120a3fe",
-    "v8flags": "^2.0.2"
+    "duce": "0.1.0",
+    "v8flags": "^2.0.2",
+    "babel-runtime": "^5.0.12"
   },
   "devDependencies": {
     "babel": "^5.0.12",
@@ -60,7 +61,9 @@
     "through": "^2.3.4"
   },
   "scripts": {
-    "build": "rm -rf ./lib && babel src --watch --loose=all --copy-files --remove-comments --out-dir lib",
+    "standalone": "webpack -w",
+    "build": "rm -rf ./lib && babel src--loose=all --optional=runtime --copy-files --remove-comments --out-dir lib --source-maps",
+    "dev": "babel src --watch --loose=all --optional=runtime --copy-files --remove-comments --out-dir lib --source-maps",
     "plaintest": "mocha --compilers js:babel/register --check-leaks -t 5000 -b -R spec test/index.js",
     "test": "npm run jshint && istanbul --config=test/.istanbul.yml cover _mocha -- --check-leaks -t 5000 -b -R spec test/index.js",
     "coveralls": "cat ./test/coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",

@@ -1,6 +1,6 @@
 // Raw
 // -------
-import {iterSymbol, iterator} from 'transduce'
+import {iterSymbol, iterator} from 'duce'
 import {AbstractBuilder}      from './abstract'
 import {raw}                  from '../sql'
 import {mixin}                from '../helpers'

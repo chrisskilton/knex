@@ -3,7 +3,7 @@ import {or, not, parameterize} from '../helpers'
 import {wrap} from '../sql/wrap'
 import {raw} from '../sql'
 import {and} from '../sql/operators'
-import {map, filter, interpose, into, compose, lazySeq, isIterable, iterator} from 'transduce'
+import {map, filter, interpose, into, compose, lazySeq, isIterable, iterator} from 'duce'
 import {SubQueryBuilder, GroupedWhereBuilder} from '../builders/query'
 import {AND, WHERE, IN, IS, NULL, COMMA, BETWEEN} from '../sql/keywords'
 import {parameter} from '../sql'
@@ -160,7 +160,7 @@ function whereArity2(column, value) {
   if (value === null) {
     return whereNull(column)
   }
-  return new WhereClause(column, '=', value)
+  return whereArity3(column, '=', value)
 }
 
 function whereArity3(column, operator, value) {

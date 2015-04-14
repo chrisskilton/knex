@@ -1,5 +1,5 @@
 import {LEFT_PAREN, RIGHT_PAREN} from './delimiters'
-import {iterSymbol, iterator} from 'transduce'
+import {iterSymbol, iterator} from 'duce'
 
 class Wrapped {
   constructor(value, prefix, suffix) {

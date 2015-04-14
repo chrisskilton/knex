@@ -1,4 +1,4 @@
-import {Transducer, protocols} from 'transduce'
+import {Transducer, protocols} from 'duce'
 const  {step: tStep, result: tResult} = protocols.transducer
 
 class SqlContainer extends Transducer {

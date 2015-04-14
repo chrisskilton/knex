@@ -1,6 +1,6 @@
 import each   from 'lodash/collection/each'
 import last   from 'lodash/array/last'
-import {into} from 'transduce'
+import {into, iterSymbol} from 'duce'
 
 export default class TokenContainer {
 
@@ -8,15 +8,16 @@ export default class TokenContainer {
   // wheres, joins, columns, unions, havings, orders, groupings, 
   // updates, options, hooks
   constructor() {
-    this.tokens = new Map([['statementType', ['select']]])
+    this.tokens = Object.create(null)
+    this.tokens.statementType = ['select']
   }
 
   has(key) {
-    return this.tokens.has(key)
+    return !!this.tokens[key]
   }
 
   get(key) {
-    return this.tokens.get(key)
+    return this.tokens[key]
   }
 
   add(key, value) {
@@ -24,20 +25,16 @@ export default class TokenContainer {
       each(value, (val) => this.add(key, val))
     } else {
       if (!this.has(key)) {
-        this.tokens.set(key, [])
+        this.tokens[key] = []
       }
-      this.tokens.get(key).push(value)      
+      this.tokens[key].push(value)      
     }
     return this
   }
 
   last(key) {
     if (!this.has(key)) return
-    return last(this.tokens.get(key))
-  }
-
-  [Symbol.iterator]() {
-    return this.tokens[Symbol.iterator]()
+    return last(this.tokens[key])
   }
 
   toJS() {

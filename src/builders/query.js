@@ -1,5 +1,5 @@
 import forEach                from 'lodash/collection/forEach'
-import {iterSymbol, iterator} from 'transduce'
+import {iterSymbol, iterator} from 'duce'
 import {AbstractBuilder}      from './abstract'
 import {mixin}                from '../helpers'
 import {HookContainer}        from '../containers/hooks'

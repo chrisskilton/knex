@@ -3,7 +3,7 @@ import {TRUNCATE, INSERT_INTO, SELECT, DISTINCT, DELETE_FROM, UPDATE, _ALL_, FRO
   GROUP_BY, UNION_ALL, LIMIT, OFFSET} from './sql/keywords'
 
 import {map, drop, lazySeq, iterSymbol, 
-  iterator, iterdone, lazySeq, interpose, protocols} from 'transduce'
+  iterator, iterdone, lazySeq, interpose, protocols} from 'duce'
 const  {transducer: {step: tStep, result: tResult}} = protocols
 import {wrap, knexFlatten, columnize, commaDelimit, isKeyword} from './helpers'
 import {COMMA, LEFT_PAREN, RIGHT_PAREN} from './sql/delimiters'

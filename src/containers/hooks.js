@@ -1,38 +1,36 @@
-import first from 'lodash/array/first'
-import rest  from 'lodash/array/rest'
 
 export class HookContainer {
 
   constructor() {
-    this.hooks = new Map()
+    this.hooks = Object.create(null)
   }
 
   addHook(name, fn) {
-    if (!this.hooks.has(name)) {
-      this.hooks.set(name, [])
+    if (!this.has(name)) {
+      this.hooks[name] = []
     }
-    this.hooks.get(name).unshift(fn)
+    this.hooks[name].unshift(fn)
     return this
   }
 
   removeHook(name) {
-    this.hooks.delete(name)
+    delete this.hooks[name]
     return this
   }
 
   has(name) {
-    return this.hooks.has(name)
+    return !!this.hooks[name]
   }
 
   get(name) {
-    if (this.hooks.has(name)) {
-      return first(this.hooks.get(name))  
+    if (this.has(name)) {
+      return this.hooks[name][0]  
     }
   }
 
   rest(name) {
-    if (this.hooks.has(name)) {
-      return rest(this.hooks.get(name))
+    if (this.has(name)) {
+      return this.hooks[name].slice(1)
     }
   }
 

@@ -1,4 +1,4 @@
-import {reduce, iterator} from 'transduce'
+import {reduce, iterable} from 'duce'
 import {escapeParam} from '../sql/string'
 
 export const IRunnable = {
@@ -14,7 +14,7 @@ export const IRunnable = {
   },
 
   addHooks(obj) {
-    for (let [k, v] of iterator(obj)) {
+    for (let [k, v] of iterable(obj)) {
       this.addHook(k, v)
     }
     return this
